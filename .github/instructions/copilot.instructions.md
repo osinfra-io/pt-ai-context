@@ -1,3 +1,6 @@
+---
+applyTo: "**/pt-*/**"
+---
 # GitHub Copilot Workspace Instructions
 
 ## Workspace Overview
