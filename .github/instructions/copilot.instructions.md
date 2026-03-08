@@ -181,10 +181,29 @@ git checkout main && git pull && git checkout -b <branch-name>
 
 Delete local branches after PRs are merged. When performing bulk operations across repos, verify each repo's unique structure before applying changes.
 
-**Instruction file structure:** Instructions are organized at three levels. When making changes:
-- **Platform-level** changes go in `pt-ai-context/.github/instructions/copilot.instructions.md` (this file)
-- **Team-level** changes go in `pt-*-ai-context/.github/instructions/copilot.instructions.md` and must be propagated to every repo in that team as `team.instructions.md`
-- **Repo-level** changes go only in that repo's `copilot.instructions.md`
+**Instruction file structure:** Instructions are organized at three levels:
+- **Platform-level** — `pt-ai-context/.github/instructions/copilot.instructions.md` (this file)
+- **Team-level** — `pt-*-ai-context/.github/instructions/copilot.instructions.md` (one per team)
+- **Repo-level** — `.github/copilot-instructions.md` in each repository
+
+Platform and team instructions are loaded via `COPILOT_CUSTOM_INSTRUCTIONS_DIRS`. Set this env var in your shell profile to a comma-separated list of the platform context repo and your team's ai-context repo:
+
+```bash
+# In ~/.zshrc or ~/.bashrc — adjust the team path to match your team
+export COPILOT_CUSTOM_INSTRUCTIONS_DIRS="\
+$HOME/repositories/osinfra-io/platform-teams/pt-ai-context,\
+$HOME/repositories/osinfra-io/platform-teams/logos/pt-logos-ai-context"
+```
+
+Team paths by team:
+- `arche` → `arche/pt-arche-ai-context`
+- `logos` → `logos/pt-logos-ai-context`
+- `corpus` → `corpus/pt-corpus-ai-context`
+- `pneuma` → `pneuma/pt-pneuma-ai-context`
+- `ekklesia` → `ekklesia/pt-ekklesia-ai-context`
+- `techne` → `techne/pt-techne-ai-context`
+
+Repo-level instructions (`.github/copilot-instructions.md`) are loaded automatically by Copilot for each repository. When adding a new repository, create this file with a brief description of what the repo does.
 
 ## References
 
