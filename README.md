@@ -6,7 +6,7 @@ Platform-level Copilot instructions for the [osinfra-io](https://github.com/osin
 
 This repository is the **platform level** of a three-level GitHub Copilot instruction hierarchy. Instructions here apply universally to every `pt-*` repository across all teams.
 
-```
+```none
 Platform   pt-ai-context                   ← this repo (applies to all pt-* repos)
   └── Team   pt-*-ai-context               ← one per team (applies to that team's repos)
         └── Repo   .github/copilot-instructions.md   ← in every repo (repo-specific only)
