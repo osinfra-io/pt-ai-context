@@ -157,7 +157,7 @@ All work follows [GitHub Flow](https://docs.github.com/en/get-started/using-gith
 2. **Commit** isolated, complete changes with descriptive messages (see Commit and PR Conventions below). Push early and often to back up work.
 3. **Open a pull request** to request review. Use a draft PR for early feedback before the work is complete.
 4. **Address review comments** with follow-up commits on the same branch.
-5. **Merge** once approved. Squash only when the branch history adds no value.
+5. **Squash and merge** once approved. Every PR lands as a single commit on `main`.
 6. **Delete the branch** locally and remotely after merging.
 
 Never commit directly to `main`.
