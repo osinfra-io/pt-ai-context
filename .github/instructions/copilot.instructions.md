@@ -149,6 +149,19 @@ resource "example" "this" {
   `#fff4e6`, `#d4edda`, `#e6d9f5`, `#d1ecf1`, `#fff3cd`, `#f8d7e5`, `#ffdab9`
 - Keep diagrams in sync with actual workflow job structure when modifying workflows
 
+## GitHub Flow
+
+All work follows [GitHub Flow](https://docs.github.com/en/get-started/using-github/github-flow) — a lightweight, branch-based workflow:
+
+1. **Branch** off `main` with a short, descriptive name: `git checkout main && git pull && git checkout -b <branch-name>`
+2. **Commit** isolated, complete changes with descriptive messages (see Commit and PR Conventions below). Push early and often to back up work.
+3. **Open a pull request** to request review. Use a draft PR for early feedback before the work is complete.
+4. **Address review comments** with follow-up commits on the same branch.
+5. **Merge** once approved. Squash only when the branch history adds no value.
+6. **Delete the branch** locally and remotely after merging.
+
+Never commit directly to `main`.
+
 ## Commit and PR Conventions
 
 - **No Conventional Commits** — do not use `feat:`, `fix:`, `chore:`, `refactor:` prefixes
