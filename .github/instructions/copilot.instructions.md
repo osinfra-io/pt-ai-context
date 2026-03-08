@@ -7,33 +7,67 @@ This VS Code workspace aggregates all platform team repositories into a single m
 ```
 platform-teams/
 ├── arche/
+│   ├── pt-arche-ai-context/          # team instructions source (loaded via COPILOT_CUSTOM_INSTRUCTIONS_DIRS)
+│   │   └── .github/instructions/copilot.instructions.md
 │   ├── pt-arche-core-helpers/
+│   │   └── .github/copilot-instructions.md
 │   ├── pt-arche-datadog-google-integration/
+│   │   └── .github/copilot-instructions.md
 │   ├── pt-arche-google-kubernetes-engine/
+│   │   └── .github/copilot-instructions.md
 │   ├── pt-arche-google-network/
+│   │   └── .github/copilot-instructions.md
 │   ├── pt-arche-google-project/
+│   │   └── .github/copilot-instructions.md
 │   ├── pt-arche-google-storage-bucket/
+│   │   └── .github/copilot-instructions.md
 │   ├── pt-arche-kubernetes-cert-manager/
+│   │   └── .github/copilot-instructions.md
 │   ├── pt-arche-kubernetes-datadog-operator/
+│   │   └── .github/copilot-instructions.md
 │   ├── pt-arche-kubernetes-istio/
+│   │   └── .github/copilot-instructions.md
 │   └── pt-arche-kubernetes-opa-gatekeeper/
+│       └── .github/copilot-instructions.md
 ├── corpus/
+│   ├── pt-corpus-ai-context/         # team instructions source (loaded via COPILOT_CUSTOM_INSTRUCTIONS_DIRS)
+│   │   └── .github/instructions/copilot.instructions.md
 │   └── pt-corpus/
+│       └── .github/copilot-instructions.md
 ├── ekklesia/
+│   ├── pt-ekklesia-ai-context/       # team instructions source (loaded via COPILOT_CUSTOM_INSTRUCTIONS_DIRS)
+│   │   └── .github/instructions/copilot.instructions.md
 │   ├── pt-ekklesia/
+│   │   └── .github/copilot-instructions.md
 │   ├── pt-ekklesia-docs/
+│   │   └── .github/copilot-instructions.md
 │   └── pt-ekklesia-repository-templates/
+│       └── .github/copilot-instructions.md
 ├── logos/
+│   ├── pt-logos-ai-context/          # team instructions source (loaded via COPILOT_CUSTOM_INSTRUCTIONS_DIRS)
+│   │   └── .github/instructions/copilot.instructions.md
 │   └── pt-logos/
+│       └── .github/copilot-instructions.md
 ├── pneuma/
+│   ├── pt-pneuma-ai-context/         # team instructions source (loaded via COPILOT_CUSTOM_INSTRUCTIONS_DIRS)
+│   │   └── .github/instructions/copilot.instructions.md
 │   ├── pt-pneuma/
+│   │   └── .github/copilot-instructions.md
 │   └── pt-pneuma-istio-test/
-├── pt-ai-context/
+│       └── .github/copilot-instructions.md
+├── pt-ai-context/                    # platform instructions source (loaded via COPILOT_CUSTOM_INSTRUCTIONS_DIRS)
+│   └── .github/instructions/copilot.instructions.md
 └── techne/
+    ├── pt-techne-ai-context/         # team instructions source (loaded via COPILOT_CUSTOM_INSTRUCTIONS_DIRS)
+    │   └── .github/instructions/copilot.instructions.md
     ├── pt-techne-misc-workflows/
+    │   └── .github/copilot-instructions.md
     ├── pt-techne-opentofu-codespace/
+    │   └── .github/copilot-instructions.md
     ├── pt-techne-opentofu-workflows/
+    │   └── .github/copilot-instructions.md
     └── pt-techne-pre-commit-hooks/
+        └── .github/copilot-instructions.md
 ```
 
 ## Platform Architecture
