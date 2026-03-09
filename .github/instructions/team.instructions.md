@@ -71,7 +71,7 @@ The platform is organized into teams (a domain of concern that may map to indivi
 Every module follows this standard file layout:
 
 | File | Purpose |
-|---|---|
+| --- | --- |
 | `main.tofu` | Resource and module declarations |
 | `variables.tofu` | Input variables with descriptions and validation |
 | `outputs.tofu` | Output values |
@@ -90,7 +90,7 @@ Every `.tofu` file (except `providers.tofu`) begins with a two-line file header:
 ```
 
 | File | Header |
-|---|---|
+| --- | --- |
 | `main.tofu` | `# Resources` / `https://opentofu.org/docs/language/resources` |
 | `variables.tofu` | `# Input Variables` / `https://opentofu.org/docs/language/values/variables` |
 | `outputs.tofu` | `# Output Values` / `https://opentofu.org/docs/language/values/outputs` |
@@ -225,7 +225,7 @@ Workspace naming patterns vary by repo type:
 
 ### Core Helpers Module
 
-The `pt-arche-core-helpers` module is invoked from every root module's `helpers.tofu`. Always use its outputs rather than hardcoding environment strings, labels, or team data. Available outputs (not all present in every repo type):
+The `pt-arche-core-helpers` module is invoked from every root module's `helpers.tofu`. Always use its outputs rather than hardcoding environment strings, labels, or team data. Available outputs (not all present in every repo type — child modules using `//child` get only `env`, `environment`, `region`, `zone`, `labels`; root modules using `//` get the full set):
 
 | Output | Description |
 | --- | --- |
@@ -255,7 +255,7 @@ git push origin vX.Y.Z
 Follow [markdownlint](https://github.com/DavidAnson/markdownlint) rules when creating or editing any Markdown file. The following rules are disabled:
 
 | Rule | Reason |
-|---|---|
+| --- | --- |
 | `MD013` (line length) | Long lines are acceptable |
 | `MD033` (no inline HTML) | Inline HTML is permitted |
 | `MD045` (no empty alt text) | Alt text is not required on images |
