@@ -117,13 +117,14 @@ Use the provider's documentation URL (e.g. `https://search.opentofu.org/provider
 
 **Ordering rules (strictly enforced by pre-commit):**
 - Variables, outputs, locals, `.tfvars` entries: alphabetical
-- Resources and data sources: alphabetical by resource type
+- Modules and resources/data sources: alphabetical by their label (the identifier after the type keyword, e.g. `resource "google_project" "this"` sorts by `this`)
 - All arguments within a block: alphabetical
 - Meta-arguments (`count`, `depends_on`, `for_each`, `lifecycle`, `provider`) come first, alphabetically among themselves
 - Exception: logical grouping is allowed for team membership variables when annotated with a comment
 
 **Formatting rules:**
 - Lists and maps: empty newline before and after, unless they are the first or last argument in the block
+- Functions: single-line for simple calls; multi-line for complex nested functions
 - Indentation: 2 spaces (enforced by `tofu fmt`)
 
 ## Pre-Commit Workflow (Mandatory)
@@ -204,14 +205,39 @@ resource "example" "this" {
 
 `terraform_remote_state` is only used within the same repository (e.g. a regional workspace reading its own main state). Cross-repo state is never accessed via `terraform_remote_state` — it is consumed exclusively through `module.helpers`.
 
+### Environments
+
+Three environments are used across all deployments:
+
+| Short (`module.helpers.env`) | Long (`module.helpers.environment`) |
+| --- | --- |
+| `sb` | `sandbox` |
+| `np` | `non-production` |
+| `prod` | `production` |
+
 ### Workspace Naming
 
-Workspaces follow the pattern `{team}-main-{env}` (e.g. `pt-logos-main-production`). The `pt-arche-core-helpers` module exposes:
+Workspace naming patterns vary by repo type:
 
-- `module.helpers.env` — short form: `sb`, `np`, `prod`
-- `module.helpers.environment` — long form: `sandbox`, `non-production`, `production`
+- **pt-logos**: `pt-logos-main-{env}` (e.g. `pt-logos-main-production`)
+- **pt-corpus**: main workspace `main-{env}`; regional workspace `{region}-{env}` (e.g. `us-east1-production`)
+- **pt-pneuma**: main workspace `main-{env}`; zonal workspace `{zone}-{env}` (e.g. `us-east1-b-production`); subdirectory workspace `{zone}-{subdirectory}-{env}` (e.g. `us-east1-b-cert-manager-production`)
 
-Always use these outputs rather than hardcoding environment strings.
+### Core Helpers Module
+
+The `pt-arche-core-helpers` module is invoked from every root module's `helpers.tofu`. Always use its outputs rather than hardcoding environment strings, labels, or team data. Available outputs (not all present in every repo type):
+
+| Output | Description |
+| --- | --- |
+| `module.helpers.env` | Short environment name: `sb`, `np`, `prod` |
+| `module.helpers.environment` | Full environment name: `sandbox`, `non-production`, `production` |
+| `module.helpers.environment_folder_id` | GCP folder ID for the current environment |
+| `module.helpers.labels` | Standard resource labels map — apply to all GCP resources |
+| `module.helpers.project_naming` | Struct with `.prefix` and `.description` for project creation |
+| `module.helpers.region` | Current deployment region |
+| `module.helpers.team` | Current team identifier (e.g. `pt-pneuma`) |
+| `module.helpers.teams` | Map of all team data from pt-logos (folders, identity groups, GitHub repos, etc.) |
+| `module.helpers.zone` | Current deployment zone (zonal subdirectories only) |
 
 ### Creating Releases
 
