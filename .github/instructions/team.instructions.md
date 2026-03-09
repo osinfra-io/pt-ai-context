@@ -46,23 +46,16 @@ platform-teams/
     └── pt-techne-pre-commit-hooks/
 ```
 
-Every non-`ai-context` repository has a `.github/copilot-instructions.md` file with repo-specific context, loaded automatically by Copilot.
-
 ## Platform Architecture
 
 The platform is organized into teams (a domain of concern that may map to individual teams, repositories, and infrastructure boundaries — or in the case of a small platform team, all of them), each with a distinct role. Deployment dependencies between the infrastructure layers are enforced at the GitHub Actions workflow level.
 
-- **Logos** — *"The foundational principle of order across systems, integrating multi-provider infrastructure, establishing boundaries, governance, and stable standards for teams to operate autonomously."* Creates GCP folder hierarchy, Google Identity groups, GitHub teams and repositories, and Datadog teams. Everything downstream depends on its outputs.
-
-- **Corpus** — *"The embodiment of that order — the structural form where networks, shared services, and core infrastructure take shape, preparing the body that Pneuma will animate."* Translates Logos structure into real infrastructure: GCP projects with CIS compliance, shared VPC and subnets, DNS zones, Artifact Registry, GitHub Actions service accounts, workload identity pools, and encrypted state buckets.
-
-- **Pneuma** — *"The breath of life animating the platform via Kubernetes, orchestrating dynamic, self-healing, and scalable services atop the Logos foundation."* Animates Corpus projects into workload environments: GKE clusters across multiple zones, cert-manager, Istio service mesh, Datadog cluster monitoring, and OPA Gatekeeper policy enforcement.
-
-- **Arche** — *"The origin and first cause — the primordial source from which all platform foundations draw their initial form and essential nature."* Reusable OpenTofu child modules consumed by all three infrastructure layers. Covers GCP projects, GKE, networking, storage, Datadog integration, and all Kubernetes add-ons. The `pt-arche-core-helpers` module is foundational — providing environment detection, labels, and team naming. Check `helpers.tofu` before hardcoding any of those values.
-
-- **Ekklesia** — *"The assembly of the called-out — where distinct capabilities are gathered into a unified body, deliberating and acting in concert toward shared platform purpose."* The developer portal and documentation layer: platform docs, Backstage running on GKE, and repository templates for new IaC projects.
-
-- **Techne** — *"The practiced art of making — the disciplined craft through which raw materials of infrastructure are shaped into purposeful, refined platform instruments."* Shared tooling: reusable GitHub Actions called workflows for OpenTofu deployments (OIDC auth, state encryption, job summaries), pre-commit hooks for IaC validation, and a GitHub Codespace for standardized developer environments.
+- **Logos** — Creates GCP folder hierarchy, Google Identity groups, GitHub teams and repositories, and Datadog teams. Everything downstream depends on its outputs.
+- **Corpus** — Translates Logos structure into real infrastructure: GCP projects with CIS compliance, shared VPC and subnets, DNS zones, Artifact Registry, GitHub Actions service accounts, workload identity pools, and encrypted state buckets.
+- **Pneuma** — Animates Corpus projects into workload environments: GKE clusters across multiple zones, cert-manager, Istio service mesh, Datadog cluster monitoring, and OPA Gatekeeper policy enforcement.
+- **Arche** — Reusable OpenTofu child modules consumed by all three infrastructure layers. Covers GCP projects, GKE, networking, storage, Datadog integration, and all Kubernetes add-ons. The `pt-arche-core-helpers` module is foundational — providing environment detection, labels, and team naming. Check `helpers.tofu` before hardcoding any of those values.
+- **Ekklesia** — Developer portal and documentation: platform docs, Backstage running on GKE, and repository templates for new IaC projects.
+- **Techne** — Shared tooling: reusable GitHub Actions called workflows for OpenTofu deployments (OIDC auth, state encryption, job summaries), pre-commit hooks for IaC validation, and a GitHub Codespace for standardized developer environments.
 
 ## Code Quality Principles
 
@@ -89,18 +82,49 @@ Every module follows this standard file layout:
 | `backend.tofu` | State backend configuration |
 | `moved.tofu` | Resource renames and moves |
 
-Every `.tofu` file begins with a comment block:
+Every `.tofu` file (except `providers.tofu`) begins with a two-line file header:
 
 ```hcl
-# Output Values
-# https://opentofu.org/docs/language/values/outputs
+# <File Type>
+# <URL>
 ```
+
+| File | Header |
+|---|---|
+| `main.tofu` | `# Resources` / `https://opentofu.org/docs/language/resources` |
+| `variables.tofu` | `# Input Variables` / `https://opentofu.org/docs/language/values/variables` |
+| `outputs.tofu` | `# Output Values` / `https://opentofu.org/docs/language/values/outputs` |
+| `locals.tofu` | `# Local Values` / `https://opentofu.org/docs/language/values/locals` |
+| `data.tofu` | `# Data Sources` / `https://opentofu.org/docs/language/data-sources` |
+| `backend.tofu` | `# Backend Configuration` / `https://opentofu.org/docs/language/settings/backends/configuration` |
+| `moved.tofu` | `# Moved Blocks` / `https://opentofu.org/docs/language/moved` |
+| `helpers.tofu` | `# OpenTofu Core Helpers Module (osinfra.io)` / `https://github.com/osinfra-io/pt-arche-core-helpers` |
+| `providers.tofu` | begins directly with a `terraform {}` block — no file header |
+
+A blank line after the header is followed optionally by additional `#` comment lines describing the file's specific purpose (e.g. what the locals transform, what the outputs expose).
+
+Every `resource`, `data`, and `module` block in `main.tofu` and `data.tofu` is preceded by its own comment block:
+
+```hcl
+# <Resource or Module Display Name>
+# <URL to provider docs or GitHub repo>
+# <optional: additional context lines>
+
+resource "google_project" "this" {
+```
+
+Use the provider's documentation URL (e.g. `https://search.opentofu.org/provider/...`) for resource and data blocks. Use the GitHub repo URL (e.g. `https://github.com/osinfra-io/pt-arche-...`) for module blocks.
 
 **Ordering rules (strictly enforced by pre-commit):**
 - Variables, outputs, locals, `.tfvars` entries: alphabetical
 - Resources and data sources: alphabetical by resource type
 - All arguments within a block: alphabetical
 - Meta-arguments (`count`, `depends_on`, `for_each`, `lifecycle`, `provider`) come first, alphabetically among themselves
+- Exception: logical grouping is allowed for team membership variables when annotated with a comment
+
+**Formatting rules:**
+- Lists and maps: empty newline before and after, unless they are the first or last argument in the block
+- Indentation: 2 spaces (enforced by `tofu fmt`)
 
 ## Pre-Commit Workflow (Mandatory)
 
@@ -117,6 +141,25 @@ Pre-commit hooks enforce: `tofu fmt`, `tofu validate`, `tofu test`, YAML validat
 
 ## Key Conventions
 
+### Logic in Locals
+
+All conditional logic, string transformations, and computed values must live in `locals.tofu` — never inline in resource or module arguments. Module and resource blocks should reference `local.*` values only.
+
+```hcl
+# ✅ Correct
+locals {
+  dns_name = var.env == "prod" ? "example.com." : "${var.env}.example.com."
+}
+module "dns" {
+  dns_name = local.dns_name
+}
+
+# ❌ Wrong
+module "dns" {
+  dns_name = var.env == "prod" ? "example.com." : "${var.env}.example.com."
+}
+```
+
 ### Module Source Pinning
 
 Always pin module sources to a full 40-character commit SHA with an inline version comment:
@@ -127,11 +170,13 @@ module "helpers" {
 }
 ```
 
-Never use branch names or semver tags as `ref` values.
+Never use branch names (unless explicitly required for testing) or semver tags as `ref` values.
 
-### Conditional Resources
+### Lifecycle
 
-Prefer `enabled` (OpenTofu v1.11+) over `count` for conditional resource creation:
+- Use `prevent_destroy = true` for critical infrastructure (KMS keys, state buckets, admin accounts)
+- Use `ignore_changes` for externally managed fields
+- Prefer `enabled` (OpenTofu v1.11+) over `count` for conditional resource creation:
 
 ```hcl
 # Preferred
@@ -152,6 +197,42 @@ resource "example" "this" {
 
 - All actions must use full 40-character commit SHAs with an inline version comment: `uses: action/name@<sha>  # v1.2.3`
 - All OpenTofu deployments use reusable called workflows from `osinfra-io/pt-techne-opentofu-workflows`
+- OpenTofu state is managed exclusively in GitHub Actions — local development does not have access to state
+- The `shared/` directory contains canonical backend and provider configurations symlinked into every workspace directory. When adding new workspace directories, symlink from `shared/`.
+
+### Remote State
+
+`terraform_remote_state` is only used within the same repository (e.g. a regional workspace reading its own main state). Cross-repo state is never accessed via `terraform_remote_state` — it is consumed exclusively through `module.helpers`.
+
+### Workspace Naming
+
+Workspaces follow the pattern `{team}-main-{env}` (e.g. `pt-logos-main-production`). The `pt-arche-core-helpers` module exposes:
+
+- `module.helpers.env` — short form: `sb`, `np`, `prod`
+- `module.helpers.environment` — long form: `sandbox`, `non-production`, `production`
+
+Always use these outputs rather than hardcoding environment strings.
+
+### Creating Releases
+
+Tags follow [Semantic Versioning](https://semver.org/): `MAJOR.MINOR.PATCH` — increment MAJOR for breaking changes, MINOR for backwards-compatible additions, PATCH for backwards-compatible fixes.
+
+Push a tag — the GitHub Actions release workflow generates notes and publishes automatically:
+
+```none
+git tag vX.Y.Z
+git push origin vX.Y.Z
+```
+
+### Markdown
+
+Follow [markdownlint](https://github.com/DavidAnson/markdownlint) rules when creating or editing any Markdown file. The following rules are disabled:
+
+| Rule | Reason |
+|---|---|
+| `MD013` (line length) | Long lines are acceptable |
+| `MD033` (no inline HTML) | Inline HTML is permitted |
+| `MD045` (no empty alt text) | Alt text is not required on images |
 
 ### Mermaid Diagrams
 
@@ -172,53 +253,22 @@ All work follows [GitHub Flow](https://docs.github.com/en/get-started/using-gith
 5. **Squash and merge** once approved. Every PR lands as a single commit on `main`.
 6. **Delete the branch** locally and remotely after merging.
 
-Never commit directly to `main`.
-
 ## Commit and PR Conventions
 
 - **No Conventional Commits** — do not use `feat:`, `fix:`, `chore:`, `refactor:` prefixes
 - Write commit messages and PR titles in sentence case natural language
-- Use GitHub labels (`enhancement`, `bug`, `refactor`, `docs`) to categorize PRs
+- Use GitHub labels to categorize PRs: `bug`, `chore`, `documentation`, `enhancement`, `security`, `tech-debt`
 
 ✅ `Improve metadata validation for GKE handler`
 ❌ `feat: add metadata endpoint`
 
 ## Workspace Workflow
 
-Always sync before branching:
-
-```bash
-git checkout main && git pull && git checkout -b <branch-name>
-```
-
 Delete local branches after PRs are merged. When performing bulk operations across repos, verify each repo's unique structure before applying changes.
 
 **Instruction file structure:** Instructions are organized at three levels:
-- **Platform-level** — `pt-ai-context/.github/instructions/copilot.instructions.md` (this file)
-- **Team-level** — `pt-*-ai-context/.github/instructions/copilot.instructions.md` (one per team)
+- **Platform-level** — `pt-ai-context/.github/instructions/team.instructions.md` (this file)
+- **Team-level** — `pt-*-ai-context/.github/instructions/team.instructions.md` (one per team)
 - **Repo-level** — `.github/copilot-instructions.md` in each repository
 
-Platform and team instructions are loaded via `COPILOT_CUSTOM_INSTRUCTIONS_DIRS`. Set this env var in your shell profile to a comma-separated list of the platform context repo and your team's ai-context repo:
-
-```bash
-# In ~/.zshrc or ~/.bashrc — adjust the team path to match your team
-export COPILOT_CUSTOM_INSTRUCTIONS_DIRS="\
-$HOME/repositories/osinfra-io/platform-teams/pt-ai-context,\
-$HOME/repositories/osinfra-io/platform-teams/logos/pt-logos-ai-context"
-```
-
-Team paths by team:
-- `arche` → `arche/pt-arche-ai-context`
-- `logos` → `logos/pt-logos-ai-context`
-- `corpus` → `corpus/pt-corpus-ai-context`
-- `pneuma` → `pneuma/pt-pneuma-ai-context`
-- `ekklesia` → `ekklesia/pt-ekklesia-ai-context`
-- `techne` → `techne/pt-techne-ai-context`
-
-Repo-level instructions (`.github/copilot-instructions.md`) are loaded automatically by Copilot for each repository. When adding a new repository, create this file with a brief description of what the repo does.
-
-## References
-
-- [OpenTofu Documentation](https://opentofu.org/docs/)
-- [OpenTofu conventions for this workspace](./../arche/pt-arche-core-helpers/.github/skills/opentofu.md)
-- [Repository instructions documentation](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/add-custom-instructions)
+When adding a new repository, create `.github/copilot-instructions.md` with a brief description of what the repo does.

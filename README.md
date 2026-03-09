@@ -1,4 +1,4 @@
-# pt-ai-context
+# Platform Team AI Context
 
 Platform-level Copilot instructions for the [osinfra-io](https://github.com/osinfra-io) platform teams workspace.
 
@@ -12,28 +12,59 @@ Platform   pt-ai-context                   ← this repo (applies to all pt-* re
         └── Repo   .github/copilot-instructions.md   ← in every repo (repo-specific only)
 ```
 
-## What's in this repo
-
-`.github/instructions/team.instructions.md` — loaded via `COPILOT_CUSTOM_INSTRUCTIONS_DIRS`. Contains conventions shared across the entire platform:
-
-- Workspace structure and repository tree
-- Platform architecture and team descriptions
-- Code quality principles
-- OpenTofu file structure and ordering rules
-- Pre-commit workflow
-- Key conventions (module pinning, conditional resources, variables/outputs, GitHub Actions SHAs, Mermaid diagrams)
-- GitHub Flow
-- Commit and PR conventions
-
 ## Setup
 
-Add this repo to your `COPILOT_CUSTOM_INSTRUCTIONS_DIRS` environment variable alongside your team's ai-context repo:
+`COPILOT_CUSTOM_INSTRUCTIONS_DIRS` tells the GitHub Copilot CLI which directories to load custom instructions from at startup. Set it to a comma-separated list of absolute paths — no spaces around commas.
+
+The workspace is cloned at `~/repositories/osinfra-io/platform-teams/`. Each ai-context repo lives within a team subdirectory:
+
+```none
+~/repositories/osinfra-io/platform-teams/
+├── pt-ai-context/                        ← platform-level (always include)
+├── arche/pt-arche-ai-context/
+├── corpus/pt-corpus-ai-context/
+├── ekklesia/pt-ekklesia-ai-context/
+├── logos/pt-logos-ai-context/
+├── pneuma/pt-pneuma-ai-context/
+└── techne/pt-techne-ai-context/
+```
+
+Always include `pt-ai-context` plus the ai-context repo for your team. If you work across multiple teams, include all relevant team repos.
+
+### Single team (most common)
 
 ```bash
-# ~/.zshrc or ~/.bashrc
+# ~/.zshrc — replace <team> with your team name
 export COPILOT_CUSTOM_INSTRUCTIONS_DIRS="\
 $HOME/repositories/osinfra-io/platform-teams/pt-ai-context,\
 $HOME/repositories/osinfra-io/platform-teams/<team>/pt-<team>-ai-context"
 ```
 
-See the team-level ai-context repos for the path specific to your team.
+| Team | Path segment |
+| --- | --- |
+| arche | `arche/pt-arche-ai-context` |
+| corpus | `corpus/pt-corpus-ai-context` |
+| ekklesia | `ekklesia/pt-ekklesia-ai-context` |
+| logos | `logos/pt-logos-ai-context` |
+| pneuma | `pneuma/pt-pneuma-ai-context` |
+| techne | `techne/pt-techne-ai-context` |
+
+### All teams
+
+```bash
+# ~/.zshrc
+export COPILOT_CUSTOM_INSTRUCTIONS_DIRS="\
+$HOME/repositories/osinfra-io/platform-teams/pt-ai-context,\
+$HOME/repositories/osinfra-io/platform-teams/arche/pt-arche-ai-context,\
+$HOME/repositories/osinfra-io/platform-teams/corpus/pt-corpus-ai-context,\
+$HOME/repositories/osinfra-io/platform-teams/ekklesia/pt-ekklesia-ai-context,\
+$HOME/repositories/osinfra-io/platform-teams/logos/pt-logos-ai-context,\
+$HOME/repositories/osinfra-io/platform-teams/pneuma/pt-pneuma-ai-context,\
+$HOME/repositories/osinfra-io/platform-teams/techne/pt-techne-ai-context"
+```
+
+After editing your shell profile, reload it:
+
+```bash
+source ~/.zshrc
+```
