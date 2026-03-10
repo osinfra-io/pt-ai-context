@@ -260,6 +260,16 @@ The `pt-arche-*` modules have an internal dependency on `pt-arche-core-helpers`.
 
 > **Important:** Module source `ref=` values must always point to a post-merge commit SHA on `main`, not to the SHA of the branch tip before the squash merge. After merging a PR, fetch `main` and use that SHA when updating downstream consumers.
 
+### README Badges
+
+All README files include status badges immediately after the title (before any other content). Use `style=for-the-badge` on all badges for visual consistency.
+
+Every repo includes a Dependabot badge linking to its `dependabot.yml` workflow run:
+
+```markdown
+[![Dependabot](https://img.shields.io/github/actions/workflow/status/osinfra-io/<repo>/dependabot.yml?style=for-the-badge&logo=github&color=2088FF&label=Dependabot)](https://github.com/osinfra-io/<repo>/actions/workflows/dependabot.yml)
+```
+
 ### Markdown
 
 Follow [markdownlint](https://github.com/DavidAnson/markdownlint) rules when creating or editing any Markdown file. The following rules are disabled:
