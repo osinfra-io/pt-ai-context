@@ -250,6 +250,16 @@ git tag vX.Y.Z
 git push origin vX.Y.Z
 ```
 
+### Arche Module Upgrade Order
+
+The `pt-arche-*` modules have an internal dependency on `pt-arche-core-helpers`. When releasing new versions across the platform, always follow this order to ensure every module is pinned to post-merge commit SHAs (not pre-merge branch SHAs):
+
+1. **Release `pt-arche-core-helpers`** — merge PR, push tag.
+2. **Update all other `pt-arche-*` modules** — update their `helpers.tofu` to the new `pt-arche-core-helpers` SHA, open PRs, merge, push tags.
+3. **Update consumers** (`pt-corpus`, `pt-ekklesia`, `pt-pneuma`) — update their `main.tofu` / `helpers.tofu` files to the new post-merge SHAs of every `pt-arche-*` module they reference, then open/update PRs and merge.
+
+> **Important:** Module source `ref=` values must always point to a post-merge commit SHA on `main`, not to the SHA of the branch tip before the squash merge. After merging a PR, fetch `main` and use that SHA when updating downstream consumers.
+
 ### Markdown
 
 Follow [markdownlint](https://github.com/DavidAnson/markdownlint) rules when creating or editing any Markdown file. The following rules are disabled:
