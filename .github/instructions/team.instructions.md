@@ -82,24 +82,24 @@ Every module follows this standard file layout:
 | `backend.tofu` | State backend configuration |
 | `moved.tofu` | Resource renames and moves |
 
-Every `.tofu` file (except `providers.tofu`) begins with a two-line file header:
+The following files begin with a two-line file header:
 
 ```hcl
-# <File Type>
+# <Display Name>
 # <URL>
 ```
 
 | File | Header |
 | --- | --- |
-| `main.tofu` | `# Resources` / `https://opentofu.org/docs/language/resources` |
 | `variables.tofu` | `# Input Variables` / `https://opentofu.org/docs/language/values/variables` |
 | `outputs.tofu` | `# Output Values` / `https://opentofu.org/docs/language/values/outputs` |
 | `locals.tofu` | `# Local Values` / `https://opentofu.org/docs/language/values/locals` |
-| `data.tofu` | `# Data Sources` / `https://opentofu.org/docs/language/data-sources` |
 | `backend.tofu` | `# Backend Configuration` / `https://opentofu.org/docs/language/settings/backends/configuration` |
 | `moved.tofu` | `# Moved Blocks` / `https://opentofu.org/docs/language/moved` |
 | `helpers.tofu` | `# OpenTofu Core Helpers Module (osinfra.io)` / `https://github.com/osinfra-io/pt-arche-core-helpers` |
 | `providers.tofu` | begins directly with a `terraform {}` block — no file header |
+| `main.tofu` | no file-level header — begins directly with the first resource or module block comment |
+| `data.tofu` | no file-level header — begins directly with the first data source block comment |
 
 A blank line after the header is followed optionally by additional `#` comment lines describing the file's specific purpose (e.g. what the locals transform, what the outputs expose).
 
