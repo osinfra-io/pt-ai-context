@@ -15,6 +15,7 @@ platform-teams/
 │   ├── pt-arche-ai-context/            # team instructions (COPILOT_CUSTOM_INSTRUCTIONS_DIRS)
 │   ├── pt-arche-core-helpers/
 │   ├── pt-arche-datadog-google-integration/
+│   ├── pt-arche-google-cloud-sql/
 │   ├── pt-arche-google-kubernetes-engine/
 │   ├── pt-arche-google-network/
 │   ├── pt-arche-google-project/
@@ -40,6 +41,7 @@ platform-teams/
 │   └── pt-pneuma-istio-test/
 └── techne/
     ├── pt-techne-ai-context/           # team instructions (COPILOT_CUSTOM_INSTRUCTIONS_DIRS)
+    ├── pt-techne-development-setup/
     ├── pt-techne-misc-workflows/
     ├── pt-techne-opentofu-codespace/
     ├── pt-techne-opentofu-workflows/
