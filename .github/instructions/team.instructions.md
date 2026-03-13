@@ -4,6 +4,10 @@ applyTo: "**/pt-*/**"
 
 # GitHub Copilot Workspace Instructions
 
+## Ignored Directories
+
+**Ignore all `.terraform/` directories entirely.** These are downloaded artifacts from `tofu init` and contain cached copies of OpenTofu child modules. Any instructions, skills files, or `copilot-instructions.md` files found inside `.terraform/` belong to the source module repos — they are not applicable in the consuming repo context and may contain outdated or conflicting guidance. Never read, search, or use content from `.terraform/` directories.
+
 ## Workspace Overview
 
 This VS Code workspace aggregates all platform team repositories into a single multi-root workspace. Each top-level directory is a collection of related repositories. **Keep this tree up to date when repositories are added or removed.**
