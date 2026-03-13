@@ -129,6 +129,24 @@ Use the provider's documentation URL (e.g. `https://search.opentofu.org/provider
 - Functions: single-line for simple calls; multi-line for complex nested functions
 - Indentation: 2 spaces (enforced by `tofu fmt`)
 
+```hcl
+resource "example" "this" {
+  description = "Example resource"
+
+  labels = {
+    env  = "production"
+    team = "platform"
+  }
+
+  name = "example"
+
+  tags = [
+    "platform",
+    "production",
+  ]
+}
+```
+
 ## Pre-Commit Workflow (Mandatory)
 
 **`pre-commit run -a` must be run after ANY change in this workspace.** Do not wait to be asked.
@@ -203,6 +221,14 @@ resource "example" "this" {
 - OpenTofu state is managed exclusively in GitHub Actions — local development does not have access to state
 - The `shared/` directory contains canonical backend and provider configurations symlinked into every workspace directory. When adding new workspace directories, symlink from `shared/`.
 
+Infrastructure teams follow a three-tier deployment workflow unless team-level instructions say otherwise:
+
+- **`sandbox.yml`** — runs on pull requests; deploys to sandbox
+- **`non-production.yml`** — runs on merge to `main`; deploys to non-production
+- **`production.yml`** — runs automatically after non-production succeeds
+
+Each workflow deploys the main workspace first, then if required, regional jobs (which `needs: main`) run after it completes. Team-level instructions document additional job ordering for subdirectory workspaces.
+
 ### Remote State
 
 `terraform_remote_state` is only used within the same repository (e.g. a regional workspace reading its own main state). Cross-repo state is never accessed via `terraform_remote_state` — it is consumed exclusively through `module.helpers`.
@@ -270,6 +296,12 @@ Every repo includes a Dependabot badge linking to its `dependabot.yml` workflow 
 
 ```markdown
 [![Dependabot](https://img.shields.io/github/actions/workflow/status/osinfra-io/<repo>/dependabot.yml?style=for-the-badge&logo=github&color=2088FF&label=Dependabot)](https://github.com/osinfra-io/<repo>/actions/workflows/dependabot.yml)
+```
+
+Repos containing IaC (OpenTofu) also include a Datadog Security Enabled badge:
+
+```markdown
+[![Datadog Security Enabled](https://img.shields.io/badge/Datadog%20Security-Enabled-632CA6?style=for-the-badge&logo=datadog)](https://app.datadoghq.com/security/code-security/repositories?repository_id=<repo>)
 ```
 
 ### Markdown
