@@ -282,14 +282,6 @@ Follow [markdownlint](https://github.com/DavidAnson/markdownlint) rules when cre
 | `MD033` (no inline HTML) | Inline HTML is permitted |
 | `MD045` (no empty alt text) | Alt text is not required on images |
 
-### Mermaid Diagrams
-
-- Use `graph LR` (left-to-right) layout
-- Always include `color:#000` for text readability on colored backgrounds
-- Color palette (use consistently; refer to the existing diagram in each repo's README for how they're applied):
-  `#fff4e6`, `#d4edda`, `#e6d9f5`, `#d1ecf1`, `#fff3cd`, `#f8d7e5`, `#ffdab9`
-- Keep diagrams in sync with actual workflow job structure when modifying workflows
-
 ## GitHub Flow
 
 All work follows [GitHub Flow](https://docs.github.com/en/get-started/using-github/github-flow) — a lightweight, branch-based workflow:
