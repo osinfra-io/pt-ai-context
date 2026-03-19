@@ -308,7 +308,7 @@ Repos containing IaC (OpenTofu) also include a Datadog Security Enabled badge:
 [![Datadog Security Enabled](https://img.shields.io/badge/Datadog%20Security-Enabled-632CA6?style=for-the-badge&logo=datadog)](https://app.datadoghq.com/security/code-security/repositories?repository_id=<repo>)
 ```
 
-Repos containing a Copilot agent (`.github/agents/`) include a Copilot Agent badge linking to the agents directory:
+Repos containing a Copilot agent (`.github/agents/`) include a Copilot Agent badge **first**, before Dependabot and Datadog:
 
 ```markdown
 [![Copilot Agent](https://img.shields.io/badge/Copilot%20Agent-Enabled-6E40C9?style=for-the-badge&logo=githubcopilot&logoColor=white)](https://github.com/osinfra-io/<repo>/tree/main/.github/agents)
