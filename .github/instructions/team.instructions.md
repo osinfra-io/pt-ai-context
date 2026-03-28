@@ -109,21 +109,46 @@ The following files begin with a two-line file header:
 
 A blank line after the header is followed optionally by additional `#` comment lines describing the file's specific purpose (e.g. what the locals transform, what the outputs expose).
 
-Every `resource`, `data`, and `module` block in `main.tofu` and `data.tofu` is preceded by its own comment block:
+In `main.tofu` and `data.tofu`, each group of `resource`, `data`, or `module` blocks that share the same type (or same module source) is preceded by a single comment block. The comment appears **once per type**, before the first block of that type — not before every individual block:
 
 ```hcl
-# <Resource or Module Display Name>
+# <Resource, Data Source, or Module Display Name>
 # <URL to provider docs or GitHub repo>
 # <optional: additional context lines>
 
 resource "google_project" "this" {
 ```
 
+For example, multiple `kubernetes_manifest` resources share one heading:
+
+```hcl
+# Kubernetes Manifest Resource
+# https://search.opentofu.org/provider/hashicorp/kubernetes/latest/docs/resources/manifest
+
+resource "kubernetes_manifest" "istio_gateway" { ... }
+
+resource "kubernetes_manifest" "istio_peer_authentication" { ... }
+```
+
+Multiple modules consuming the same source share one heading:
+
+```hcl
+# Datadog Google Cloud Platform Integration Module (osinfra.io)
+# https://github.com/osinfra-io/pt-arche-datadog-google-integration
+
+module "datadog_google_integration" { ... }
+
+module "datadog_google_integration_team_kubernetes_projects" { ... }
+
+module "datadog_google_integration_team_projects" { ... }
+```
+
 Use the provider's documentation URL (e.g. `https://search.opentofu.org/provider/...`) for resource and data blocks. Use the GitHub repo URL (e.g. `https://github.com/osinfra-io/pt-arche-...`) for module blocks.
 
 **Ordering rules (strictly enforced by pre-commit):**
 - Variables, outputs, locals, `.tfvars` entries: alphabetical
-- In `main.tofu`: all `module` blocks first, then all `resource` blocks — each group sorted alphabetically by label (the identifier after the type keyword, e.g. `resource "google_project" "this"` sorts by `this`). In `data.tofu`: all `data` blocks sorted alphabetically by label.
+- In `main.tofu`: all `module` blocks first, then all `resource` blocks — each group sorted alphabetically by type (e.g. `google_compute_network` before `google_project`), then by name when types match (e.g. `"alpha"` before `"beta"`). In `data.tofu`: all `data` blocks sorted alphabetically by type, then by name.
+- Blocks that use `for_each` must have a plural name (e.g. `module "google_projects"` not `module "google_project"`, `resource "google_project_iam_member" "owners"` not `"owner"`)
 - All arguments within a block: alphabetical
 - Meta-arguments (`count`, `depends_on`, `for_each`, `lifecycle`, `provider`) come first, alphabetically among themselves
 - Exception: logical grouping is allowed for team membership variables when annotated with a comment
@@ -196,6 +221,25 @@ module "helpers" {
 ```
 
 Never use branch names (unless explicitly required for testing) or semver tags as `ref` values.
+
+### Module Naming
+
+When consuming a `pt-arche-*` module, derive the module block name from the repo name by stripping the team prefix (`pt-arche-`) and replacing hyphens with underscores:
+
+```hcl
+# pt-arche-datadog-google-integration → datadog_google_integration
+module "datadog_google_integration" {
+  source = "github.com/osinfra-io/pt-arche-datadog-google-integration?ref=<sha>"  # v0.4.1
+}
+```
+
+When consuming the same module more than once, append a descriptive suffix explaining what each instance is for:
+
+```hcl
+module "datadog_google_integration" { ... }
+module "datadog_google_integration_team_kubernetes_projects" { ... }
+module "datadog_google_integration_team_projects" { ... }
+```
 
 ### Lifecycle
 
