@@ -17,6 +17,7 @@ platform-teams/
 ├── pt-ai-context/                      # platform instructions (COPILOT_CUSTOM_INSTRUCTIONS_DIRS)
 ├── arche/
 │   ├── pt-arche-ai-context/            # team instructions (COPILOT_CUSTOM_INSTRUCTIONS_DIRS)
+│   ├── pt-arche-child-module-template/
 │   ├── pt-arche-core-helpers/
 │   ├── pt-arche-datadog-google-integration/
 │   ├── pt-arche-google-cloud-sql/
@@ -109,21 +110,46 @@ The following files begin with a two-line file header:
 
 A blank line after the header is followed optionally by additional `#` comment lines describing the file's specific purpose (e.g. what the locals transform, what the outputs expose).
 
-Every `resource`, `data`, and `module` block in `main.tofu` and `data.tofu` is preceded by its own comment block:
+In `main.tofu` and `data.tofu`, each group of `resource`, `data`, or `module` blocks that share the same type (or same module source) is preceded by a single comment block. The comment appears **once per type**, before the first block of that type — not before every individual block:
 
 ```hcl
-# <Resource or Module Display Name>
+# <Resource, Data Source, or Module Display Name>
 # <URL to provider docs or GitHub repo>
 # <optional: additional context lines>
 
 resource "google_project" "this" {
 ```
 
-Use the provider's documentation URL (e.g. `https://search.opentofu.org/provider/...`) for resource and data blocks. Use the GitHub repo URL (e.g. `https://github.com/osinfra-io/pt-arche-...`) for module blocks.
+For example, multiple `kubernetes_manifest` resources share one heading:
 
-**Ordering rules (strictly enforced by pre-commit):**
+```hcl
+# Kubernetes Manifest Resource
+# https://search.opentofu.org/provider/hashicorp/kubernetes/latest/docs/resources/manifest
+
+resource "kubernetes_manifest" "istio_gateway" { ... }
+
+resource "kubernetes_manifest" "istio_peer_authentication" { ... }
+```
+
+Multiple modules consuming the same source share one heading:
+
+```hcl
+# Datadog Google Cloud Platform Integration Module (osinfra.io)
+# https://github.com/osinfra-io/pt-arche-datadog-google-integration
+
+module "datadog_google_integration" { ... }
+
+module "datadog_google_integration_team_kubernetes_projects" { ... }
+
+module "datadog_google_integration_team_projects" { ... }
+```
+
+Use the provider's documentation URL (e.g. `https://search.opentofu.org/provider/...`) for resource and data blocks. Use the GitHub repo URL (e.g. `https://github.com/osinfra-io/pt-arche-...`) for module blocks. Always validate that comment URLs resolve correctly before adding or approving them.
+
+**Ordering rules:**
 - Variables, outputs, locals, `.tfvars` entries: alphabetical
-- Modules and resources/data sources: alphabetical by their label (the identifier after the type keyword, e.g. `resource "google_project" "this"` sorts by `this`)
+- In `main.tofu`: all `module` blocks first (sorted alphabetically by name), then all `resource` blocks (sorted alphabetically by type, e.g. `google_compute_network` before `google_project`, then by name when types match, e.g. `"alpha"` before `"beta"`). In `data.tofu`: all `data` blocks sorted alphabetically by type, then by name.
+- Blocks that use `for_each` should have a plural name **only when `for_each` iterates over instances of the named thing** (e.g. `module "google_projects"` iterating over projects, `resource "google_dns_record_set" "team_ns_delegations"` iterating over delegations). Keep the name singular when `for_each` iterates over a different dimension (e.g. `resource "google_storage_bucket_iam_member" "cloud_cost_management"` iterating over roles for one bucket). Exception: `"this"` is always acceptable regardless of `for_each`.
 - All arguments within a block: alphabetical
 - Meta-arguments (`count`, `depends_on`, `for_each`, `lifecycle`, `provider`) come first, alphabetically among themselves
 - Exception: logical grouping is allowed for team membership variables when annotated with a comment
@@ -168,7 +194,7 @@ Pre-commit hooks enforce: `tofu fmt`, `tofu validate`, `tofu test`, YAML validat
 
 ### Logic in Locals
 
-All conditional logic, string transformations, and computed values must live in `locals.tofu` — never inline in resource or module arguments. Module and resource blocks should reference `local.*` values only.
+All conditional logic, string transformations, and computed values must live in `locals.tofu` — never inline in resource or module arguments. Blocks reference `local.*` for computed values, but may also reference `module.*`, `var.*`, and `each.*` directly.
 
 ```hcl
 # ✅ Correct
@@ -190,12 +216,31 @@ module "dns" {
 Always pin module sources to a full 40-character commit SHA with an inline version comment:
 
 ```hcl
-module "helpers" {
+module "core_helpers" {
   source = "github.com/osinfra-io/pt-arche-core-helpers//child?ref=<commit_sha>"  # v1.2.3
 }
 ```
 
 Never use branch names (unless explicitly required for testing) or semver tags as `ref` values.
+
+### Module Naming
+
+When consuming a `pt-arche-*` module, derive the module block name from the repo name by stripping the team prefix (`pt-arche-`) and replacing hyphens with underscores:
+
+```hcl
+# pt-arche-datadog-google-integration → datadog_google_integration
+module "datadog_google_integration" {
+  source = "github.com/osinfra-io/pt-arche-datadog-google-integration?ref=<sha>"  # v0.4.1
+}
+```
+
+When consuming the same module more than once, append a descriptive suffix explaining what each instance is for:
+
+```hcl
+module "datadog_google_integration" { ... }
+module "datadog_google_integration_team_kubernetes_projects" { ... }
+module "datadog_google_integration_team_projects" { ... }
+```
 
 ### Lifecycle
 
@@ -261,15 +306,15 @@ The `pt-arche-core-helpers` module is invoked from every root module's `helpers.
 
 | Output | Description |
 | --- | --- |
-| `module.helpers.env` | Short environment name: `sb`, `np`, `prod` |
-| `module.helpers.environment` | Full environment name: `sandbox`, `non-production`, `production` |
-| `module.helpers.environment_folder_id` | GCP folder ID for the current environment |
-| `module.helpers.labels` | Standard resource labels map — apply to all GCP resources |
-| `module.helpers.project_naming` | Struct with `.prefix` and `.description` for project creation |
-| `module.helpers.region` | Current deployment region |
-| `module.helpers.team` | Current team identifier (e.g. `pt-pneuma`) |
-| `module.helpers.teams` | Map of all team data from pt-logos (folders, identity groups, GitHub repos, etc.) |
-| `module.helpers.zone` | Current deployment zone (zonal subdirectories only) |
+| `module.core_helpers.env` | Short environment name: `sb`, `np`, `prod` |
+| `module.core_helpers.environment` | Full environment name: `sandbox`, `non-production`, `production` |
+| `module.core_helpers.environment_folder_id` | GCP folder ID for the current environment |
+| `module.core_helpers.labels` | Standard resource labels map — apply to all GCP resources |
+| `module.core_helpers.project_naming` | Struct with `.prefix` and `.description` for project creation |
+| `module.core_helpers.region` | Current deployment region |
+| `module.core_helpers.team` | Current team identifier (e.g. `pt-pneuma`) |
+| `module.core_helpers.teams` | Map of all team data from pt-logos (folders, identity groups, GitHub repos, etc.) |
+| `module.core_helpers.zone` | Current deployment zone (zonal subdirectories only) |
 
 ### Creating Releases
 
@@ -294,24 +339,32 @@ The `pt-arche-*` modules have an internal dependency on `pt-arche-core-helpers`.
 
 ### README Badges
 
-All README files include status badges immediately after the title (before any other content). Use `style=for-the-badge` on all badges for visual consistency.
+All README files include status badges immediately after the title (before any other content). Use `style=for-the-badge` on all badges for visual consistency. Only include a badge when the repo has the corresponding workflow or feature — for example, only add a Dependabot badge if the repo has a `dependabot.yml` workflow.
 
-Every repo includes a Dependabot badge linking to its `dependabot.yml` workflow run:
+Badge order (include only those that apply):
+
+1. **Copilot Agent** — repos containing `.github/agents/`:
+
+```markdown
+[![Copilot Agent](https://img.shields.io/badge/Copilot%20Agent-Enabled-6E40C9?style=for-the-badge&logo=githubcopilot&logoColor=white)](https://github.com/osinfra-io/<repo>/tree/main/.github/agents)
+```
+
+2. **OpenTofu Tests** — repos with a `test.yml` workflow:
+
+```markdown
+[![OpenTofu Tests](https://img.shields.io/github/actions/workflow/status/osinfra-io/<repo>/test.yml?style=for-the-badge&logo=opentofu&color=FEDA15&label=OpenTofu%20Tests)](https://github.com/osinfra-io/<repo>/actions/workflows/test.yml)
+```
+
+3. **Dependabot** — repos with a `dependabot.yml` workflow:
 
 ```markdown
 [![Dependabot](https://img.shields.io/github/actions/workflow/status/osinfra-io/<repo>/dependabot.yml?style=for-the-badge&logo=github&color=2088FF&label=Dependabot)](https://github.com/osinfra-io/<repo>/actions/workflows/dependabot.yml)
 ```
 
-Repos containing IaC (OpenTofu) also include a Datadog Security Enabled badge:
+4. **Datadog Security** — repos containing IaC (OpenTofu):
 
 ```markdown
 [![Datadog Security Enabled](https://img.shields.io/badge/Datadog%20Security-Enabled-632CA6?style=for-the-badge&logo=datadog)](https://app.datadoghq.com/security/code-security/repositories?repository_id=<repo>)
-```
-
-Repos containing a Copilot agent (`.github/agents/`) include a Copilot Agent badge **first**, before Dependabot and Datadog:
-
-```markdown
-[![Copilot Agent](https://img.shields.io/badge/Copilot%20Agent-Enabled-6E40C9?style=for-the-badge&logo=githubcopilot&logoColor=white)](https://github.com/osinfra-io/<repo>/tree/main/.github/agents)
 ```
 
 ### Markdown
