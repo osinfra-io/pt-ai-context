@@ -149,7 +149,7 @@ Use the provider's documentation URL (e.g. `https://search.opentofu.org/provider
 **Ordering rules:**
 - Variables, outputs, locals, `.tfvars` entries: alphabetical
 - In `main.tofu`: all `module` blocks first (sorted alphabetically by name), then all `resource` blocks (sorted alphabetically by type, e.g. `google_compute_network` before `google_project`, then by name when types match, e.g. `"alpha"` before `"beta"`). In `data.tofu`: all `data` blocks sorted alphabetically by type, then by name.
-- Blocks that use `for_each` must have a plural name (e.g. `module "google_projects"` not `module "google_project"`, `resource "google_project_iam_member" "owners"` not `"owner"`). Exception: `"this"` is always acceptable regardless of `for_each`.
+- Blocks that use `for_each` should have a plural name **only when `for_each` iterates over instances of the named thing** (e.g. `module "google_projects"` iterating over projects, `resource "google_dns_record_set" "team_ns_delegations"` iterating over delegations). Keep the name singular when `for_each` iterates over a different dimension (e.g. `resource "google_storage_bucket_iam_member" "cloud_cost_management"` iterating over roles for one bucket). Exception: `"this"` is always acceptable regardless of `for_each`.
 - All arguments within a block: alphabetical
 - Meta-arguments (`count`, `depends_on`, `for_each`, `lifecycle`, `provider`) come first, alphabetically among themselves
 - Exception: logical grouping is allowed for team membership variables when annotated with a comment
