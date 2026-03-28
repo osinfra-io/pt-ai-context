@@ -17,6 +17,7 @@ platform-teams/
 ├── pt-ai-context/                      # platform instructions (COPILOT_CUSTOM_INSTRUCTIONS_DIRS)
 ├── arche/
 │   ├── pt-arche-ai-context/            # team instructions (COPILOT_CUSTOM_INSTRUCTIONS_DIRS)
+│   ├── pt-arche-child-module-template/
 │   ├── pt-arche-core-helpers/
 │   ├── pt-arche-datadog-google-integration/
 │   ├── pt-arche-google-cloud-sql/
@@ -145,10 +146,10 @@ module "datadog_google_integration_team_projects" { ... }
 
 Use the provider's documentation URL (e.g. `https://search.opentofu.org/provider/...`) for resource and data blocks. Use the GitHub repo URL (e.g. `https://github.com/osinfra-io/pt-arche-...`) for module blocks. Always validate that comment URLs resolve correctly before adding or approving them.
 
-**Ordering rules (strictly enforced by pre-commit):**
+**Ordering rules:**
 - Variables, outputs, locals, `.tfvars` entries: alphabetical
 - In `main.tofu`: all `module` blocks first (sorted alphabetically by name), then all `resource` blocks (sorted alphabetically by type, e.g. `google_compute_network` before `google_project`, then by name when types match, e.g. `"alpha"` before `"beta"`). In `data.tofu`: all `data` blocks sorted alphabetically by type, then by name.
-- Blocks that use `for_each` must have a plural name (e.g. `module "google_projects"` not `module "google_project"`, `resource "google_project_iam_member" "owners"` not `"owner"`)
+- Blocks that use `for_each` must have a plural name (e.g. `module "google_projects"` not `module "google_project"`, `resource "google_project_iam_member" "owners"` not `"owner"`). Exception: `"this"` is always acceptable regardless of `for_each`.
 - All arguments within a block: alphabetical
 - Meta-arguments (`count`, `depends_on`, `for_each`, `lifecycle`, `provider`) come first, alphabetically among themselves
 - Exception: logical grouping is allowed for team membership variables when annotated with a comment
@@ -215,7 +216,7 @@ module "dns" {
 Always pin module sources to a full 40-character commit SHA with an inline version comment:
 
 ```hcl
-module "helpers" {
+module "core_helpers" {
   source = "github.com/osinfra-io/pt-arche-core-helpers//child?ref=<commit_sha>"  # v1.2.3
 }
 ```
@@ -305,15 +306,15 @@ The `pt-arche-core-helpers` module is invoked from every root module's `helpers.
 
 | Output | Description |
 | --- | --- |
-| `module.helpers.env` | Short environment name: `sb`, `np`, `prod` |
-| `module.helpers.environment` | Full environment name: `sandbox`, `non-production`, `production` |
-| `module.helpers.environment_folder_id` | GCP folder ID for the current environment |
-| `module.helpers.labels` | Standard resource labels map — apply to all GCP resources |
-| `module.helpers.project_naming` | Struct with `.prefix` and `.description` for project creation |
-| `module.helpers.region` | Current deployment region |
-| `module.helpers.team` | Current team identifier (e.g. `pt-pneuma`) |
-| `module.helpers.teams` | Map of all team data from pt-logos (folders, identity groups, GitHub repos, etc.) |
-| `module.helpers.zone` | Current deployment zone (zonal subdirectories only) |
+| `module.core_helpers.env` | Short environment name: `sb`, `np`, `prod` |
+| `module.core_helpers.environment` | Full environment name: `sandbox`, `non-production`, `production` |
+| `module.core_helpers.environment_folder_id` | GCP folder ID for the current environment |
+| `module.core_helpers.labels` | Standard resource labels map — apply to all GCP resources |
+| `module.core_helpers.project_naming` | Struct with `.prefix` and `.description` for project creation |
+| `module.core_helpers.region` | Current deployment region |
+| `module.core_helpers.team` | Current team identifier (e.g. `pt-pneuma`) |
+| `module.core_helpers.teams` | Map of all team data from pt-logos (folders, identity groups, GitHub repos, etc.) |
+| `module.core_helpers.zone` | Current deployment zone (zonal subdirectories only) |
 
 ### Creating Releases
 
@@ -338,24 +339,32 @@ The `pt-arche-*` modules have an internal dependency on `pt-arche-core-helpers`.
 
 ### README Badges
 
-All README files include status badges immediately after the title (before any other content). Use `style=for-the-badge` on all badges for visual consistency.
+All README files include status badges immediately after the title (before any other content). Use `style=for-the-badge` on all badges for visual consistency. Only include a badge when the repo has the corresponding workflow or feature — for example, only add a Dependabot badge if the repo has a `dependabot.yml` workflow.
 
-Every repo includes a Dependabot badge linking to its `dependabot.yml` workflow run:
+Badge order (include only those that apply):
+
+1. **Copilot Agent** — repos containing `.github/agents/`:
+
+```markdown
+[![Copilot Agent](https://img.shields.io/badge/Copilot%20Agent-Enabled-6E40C9?style=for-the-badge&logo=githubcopilot&logoColor=white)](https://github.com/osinfra-io/<repo>/tree/main/.github/agents)
+```
+
+2. **OpenTofu Tests** — repos with a `test.yml` workflow:
+
+```markdown
+[![OpenTofu Tests](https://img.shields.io/github/actions/workflow/status/osinfra-io/<repo>/test.yml?style=for-the-badge&logo=opentofu&color=FEDA15&label=OpenTofu%20Tests)](https://github.com/osinfra-io/<repo>/actions/workflows/test.yml)
+```
+
+3. **Dependabot** — repos with a `dependabot.yml` workflow:
 
 ```markdown
 [![Dependabot](https://img.shields.io/github/actions/workflow/status/osinfra-io/<repo>/dependabot.yml?style=for-the-badge&logo=github&color=2088FF&label=Dependabot)](https://github.com/osinfra-io/<repo>/actions/workflows/dependabot.yml)
 ```
 
-Repos containing IaC (OpenTofu) also include a Datadog Security Enabled badge:
+4. **Datadog Security** — repos containing IaC (OpenTofu):
 
 ```markdown
 [![Datadog Security Enabled](https://img.shields.io/badge/Datadog%20Security-Enabled-632CA6?style=for-the-badge&logo=datadog)](https://app.datadoghq.com/security/code-security/repositories?repository_id=<repo>)
-```
-
-Repos containing a Copilot agent (`.github/agents/`) include a Copilot Agent badge **first**, before Dependabot and Datadog:
-
-```markdown
-[![Copilot Agent](https://img.shields.io/badge/Copilot%20Agent-Enabled-6E40C9?style=for-the-badge&logo=githubcopilot&logoColor=white)](https://github.com/osinfra-io/<repo>/tree/main/.github/agents)
 ```
 
 ### Markdown
