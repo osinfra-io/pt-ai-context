@@ -123,7 +123,7 @@ Use the provider's documentation URL (e.g. `https://search.opentofu.org/provider
 
 **Ordering rules (strictly enforced by pre-commit):**
 - Variables, outputs, locals, `.tfvars` entries: alphabetical
-- Modules and resources/data sources: alphabetical by their label (the identifier after the type keyword, e.g. `resource "google_project" "this"` sorts by `this`)
+- In `main.tofu`: all `module` blocks first, then all `resource` blocks — each group sorted alphabetically by label (the identifier after the type keyword, e.g. `resource "google_project" "this"` sorts by `this`). In `data.tofu`: all `data` blocks sorted alphabetically by label.
 - All arguments within a block: alphabetical
 - Meta-arguments (`count`, `depends_on`, `for_each`, `lifecycle`, `provider`) come first, alphabetically among themselves
 - Exception: logical grouping is allowed for team membership variables when annotated with a comment
