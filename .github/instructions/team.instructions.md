@@ -147,7 +147,7 @@ Use the provider's documentation URL (e.g. `https://search.opentofu.org/provider
 
 **Ordering rules (strictly enforced by pre-commit):**
 - Variables, outputs, locals, `.tfvars` entries: alphabetical
-- In `main.tofu`: all `module` blocks first, then all `resource` blocks — each group sorted alphabetically by type (e.g. `google_compute_network` before `google_project`), then by name when types match (e.g. `"alpha"` before `"beta"`). In `data.tofu`: all `data` blocks sorted alphabetically by type, then by name.
+- In `main.tofu`: all `module` blocks first (sorted alphabetically by name), then all `resource` blocks (sorted alphabetically by type, e.g. `google_compute_network` before `google_project`, then by name when types match, e.g. `"alpha"` before `"beta"`). In `data.tofu`: all `data` blocks sorted alphabetically by type, then by name.
 - Blocks that use `for_each` must have a plural name (e.g. `module "google_projects"` not `module "google_project"`, `resource "google_project_iam_member" "owners"` not `"owner"`)
 - All arguments within a block: alphabetical
 - Meta-arguments (`count`, `depends_on`, `for_each`, `lifecycle`, `provider`) come first, alphabetically among themselves
@@ -193,7 +193,7 @@ Pre-commit hooks enforce: `tofu fmt`, `tofu validate`, `tofu test`, YAML validat
 
 ### Logic in Locals
 
-All conditional logic, string transformations, and computed values must live in `locals.tofu` — never inline in resource or module arguments. Module and resource blocks should reference `local.*` values only.
+All conditional logic, string transformations, and computed values must live in `locals.tofu` — never inline in resource or module arguments. Blocks reference `local.*` for computed values, but may also reference `module.*`, `var.*`, and `each.*` directly.
 
 ```hcl
 # ✅ Correct
