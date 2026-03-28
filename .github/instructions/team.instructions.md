@@ -143,7 +143,7 @@ module "datadog_google_integration_team_kubernetes_projects" { ... }
 module "datadog_google_integration_team_projects" { ... }
 ```
 
-Use the provider's documentation URL (e.g. `https://search.opentofu.org/provider/...`) for resource and data blocks. Use the GitHub repo URL (e.g. `https://github.com/osinfra-io/pt-arche-...`) for module blocks.
+Use the provider's documentation URL (e.g. `https://search.opentofu.org/provider/...`) for resource and data blocks. Use the GitHub repo URL (e.g. `https://github.com/osinfra-io/pt-arche-...`) for module blocks. Always validate that comment URLs resolve correctly before adding or approving them.
 
 **Ordering rules (strictly enforced by pre-commit):**
 - Variables, outputs, locals, `.tfvars` entries: alphabetical
