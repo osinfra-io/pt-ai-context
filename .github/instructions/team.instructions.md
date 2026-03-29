@@ -110,7 +110,7 @@ The following files begin with a two-line file header:
 
 A blank line after the header is followed optionally by additional `#` comment lines describing the file's specific purpose (e.g. what the locals transform, what the outputs expose).
 
-In `main.tofu` and `data.tofu`, each group of `resource`, `data`, or `module` blocks that share the same type (or same module source) is preceded by a single comment block. The comment appears **once per type**, before the first block of that type — not before every individual block:
+In `main.tofu` and `data.tofu`, each group of `resource`, `data`, or `module` blocks that share the same type (or same module source) is preceded by a single comment block. The comment appears **once per type or shared module source**, before the first block of that group — not before every individual block. All module blocks sharing the same source must be kept **contiguous** (grouped together) so they fall under one heading:
 
 ```hcl
 # <Resource, Data Source, or Module Display Name>
@@ -148,11 +148,11 @@ Use the provider's documentation URL (e.g. `https://search.opentofu.org/provider
 
 **Ordering rules:**
 - Variables, outputs, locals, `.tfvars` entries: alphabetical
-- In `main.tofu`: all `module` blocks first (sorted alphabetically by name), then all `resource` blocks (sorted alphabetically by type, e.g. `google_compute_network` before `google_project`, then by name when types match, e.g. `"alpha"` before `"beta"`). In `data.tofu`: all `data` blocks sorted alphabetically by type, then by name.
+- In `main.tofu`: all `module` blocks first, then all `resource` blocks (sorted alphabetically by type, e.g. `google_compute_network` before `google_project`, then by name when types match, e.g. `"alpha"` before `"beta"`). Module blocks are grouped by source — all module blocks that share the same source URL are kept **contiguous** under a single heading, sorted alphabetically by module name within that group. Source groups are ordered alphabetically by source URL (e.g. `github.com/osinfra-io/pt-arche-core-helpers` before `github.com/osinfra-io/pt-arche-google-project`). In `data.tofu`: all `data` blocks sorted alphabetically by type, then by name.
 - Blocks that use `for_each` should have a plural name **only when `for_each` iterates over instances of the named thing** (e.g. `module "google_projects"` iterating over projects, `resource "google_dns_record_set" "team_ns_delegations"` iterating over delegations). Keep the name singular when `for_each` iterates over a different dimension (e.g. `resource "google_storage_bucket_iam_member" "cloud_cost_management"` iterating over roles for one bucket). Exception: `"this"` is always acceptable regardless of `for_each`.
 - All arguments within a block: alphabetical
-- `source` in module blocks always comes first, followed by an empty line before any remaining arguments
-- Meta-arguments (`count`, `depends_on`, `for_each`, `lifecycle`, `provider`) come first, alphabetically among themselves
+- In **module blocks**: `source` comes first, followed by an empty line, then any meta-arguments (`count`, `depends_on`, `for_each`, `lifecycle`, `provider`) alphabetically, then all other arguments alphabetically
+- In **resource blocks**: meta-arguments (`count`, `depends_on`, `for_each`, `lifecycle`, `provider`) come first, alphabetically among themselves, then all other arguments alphabetically
 - Exception: logical grouping is allowed for team membership variables when annotated with a comment
 
 **Formatting rules:**
@@ -285,13 +285,13 @@ Each workflow deploys the main workspace first, then if required, regional jobs 
 
 ### Remote State
 
-`terraform_remote_state` is only used within the same repository (e.g. a regional workspace reading its own main state). Cross-repo state is never accessed via `terraform_remote_state` — it is consumed exclusively through `module.helpers`.
+`terraform_remote_state` is only used within the same repository (e.g. a regional workspace reading its own main state). Cross-repo state is never accessed via `terraform_remote_state` — it is consumed exclusively through `module.core_helpers`.
 
 ### Environments
 
 Three environments are used across all deployments:
 
-| Short (`module.helpers.env`) | Long (`module.helpers.environment`) |
+| Short (`module.core_helpers.env`) | Long (`module.core_helpers.environment`) |
 | --- | --- |
 | `sb` | `sandbox` |
 | `np` | `non-production` |
