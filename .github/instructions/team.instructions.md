@@ -304,7 +304,7 @@ Three environments are used across all deployments:
 | Short (`module.core_helpers.env`) | Long (`module.core_helpers.environment`) |
 | --- | --- |
 | `sb` | `sandbox` |
-| `np` | `non-production` |
+| `nonprod` | `non-production` |
 | `prod` | `production` |
 
 ### Workspace Naming
