@@ -321,7 +321,7 @@ The `pt-arche-core-helpers` module is invoked from every root module's `helpers.
 
 | Output | Description |
 | --- | --- |
-| `module.core_helpers.env` | Short environment name: `sb`, `np`, `prod` |
+| `module.core_helpers.env` | Short environment name: `sb`, `nonprod`, `prod` |
 | `module.core_helpers.environment` | Full environment name: `sandbox`, `non-production`, `production` |
 | `module.core_helpers.environment_folder_id` | GCP folder ID for the current environment |
 | `module.core_helpers.labels` | Standard resource labels map — apply to all GCP resources |
