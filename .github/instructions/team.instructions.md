@@ -304,7 +304,7 @@ Three environments are used across all deployments:
 | Short (`module.core_helpers.env`) | Long (`module.core_helpers.environment`) |
 | --- | --- |
 | `sb` | `sandbox` |
-| `np` | `non-production` |
+| `nonprod` | `non-production` |
 | `prod` | `production` |
 
 ### Workspace Naming
@@ -321,7 +321,7 @@ The `pt-arche-core-helpers` module is invoked from every root module's `helpers.
 
 | Output | Description |
 | --- | --- |
-| `module.core_helpers.env` | Short environment name: `sb`, `np`, `prod` |
+| `module.core_helpers.env` | Short environment name: `sb`, `nonprod`, `prod` |
 | `module.core_helpers.environment` | Full environment name: `sandbox`, `non-production`, `production` |
 | `module.core_helpers.environment_folder_id` | GCP folder ID for the current environment |
 | `module.core_helpers.labels` | Standard resource labels map — apply to all GCP resources |
