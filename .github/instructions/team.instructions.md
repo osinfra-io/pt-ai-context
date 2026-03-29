@@ -273,7 +273,17 @@ resource "example" "this" {
 - All actions must use full 40-character commit SHAs with an inline version comment: `uses: action/name@<sha>  # v1.2.3`
 - All OpenTofu deployments use reusable called workflows from `osinfra-io/pt-techne-opentofu-workflows`
 - OpenTofu state is managed exclusively in GitHub Actions — local development does not have access to state
-- The `shared/` directory contains canonical backend and provider configurations symlinked into every workspace directory. When adding new workspace directories, symlink from `shared/`.
+- When the same file content exists in multiple sibling directories, put the canonical copy in a `shared/` directory alongside them and create a relative symlink from each sibling that needs it — never duplicate the file. This applies at any level of the directory tree: a root-level `shared/` serves root siblings; a `regional/shared/` serves siblings within `regional/`. Always use the nearest `shared/` that contains the file:
+
+  ```bash
+  # regional/ and regional/onboarding/ both need the same helpers.tofu → use root shared/
+  cd regional/          && ln -s ../shared/helpers.tofu helpers.tofu
+  cd regional/onboarding && ln -s ../../shared/helpers.tofu helpers.tofu
+
+  # regional/zone-a/ and regional/zone-b/ share a file unique to that level → use regional/shared/
+  cd regional/zone-a && ln -s ../shared/backend.tofu backend.tofu
+  cd regional/zone-b && ln -s ../shared/backend.tofu backend.tofu
+  ```
 
 Infrastructure teams follow a three-tier deployment workflow unless team-level instructions say otherwise:
 
