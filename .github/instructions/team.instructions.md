@@ -151,6 +151,7 @@ Use the provider's documentation URL (e.g. `https://search.opentofu.org/provider
 - In `main.tofu`: all `module` blocks first (sorted alphabetically by name), then all `resource` blocks (sorted alphabetically by type, e.g. `google_compute_network` before `google_project`, then by name when types match, e.g. `"alpha"` before `"beta"`). In `data.tofu`: all `data` blocks sorted alphabetically by type, then by name.
 - Blocks that use `for_each` should have a plural name **only when `for_each` iterates over instances of the named thing** (e.g. `module "google_projects"` iterating over projects, `resource "google_dns_record_set" "team_ns_delegations"` iterating over delegations). Keep the name singular when `for_each` iterates over a different dimension (e.g. `resource "google_storage_bucket_iam_member" "cloud_cost_management"` iterating over roles for one bucket). Exception: `"this"` is always acceptable regardless of `for_each`.
 - All arguments within a block: alphabetical
+- `source` in module blocks always comes first, followed by an empty line before any remaining arguments
 - Meta-arguments (`count`, `depends_on`, `for_each`, `lifecycle`, `provider`) come first, alphabetically among themselves
 - Exception: logical grouping is allowed for team membership variables when annotated with a comment
 
@@ -218,6 +219,8 @@ Always pin module sources to a full 40-character commit SHA with an inline versi
 ```hcl
 module "core_helpers" {
   source = "github.com/osinfra-io/pt-arche-core-helpers//child?ref=<commit_sha>"  # v1.2.3
+
+  labels = module.core_helpers.labels
 }
 ```
 
@@ -231,6 +234,8 @@ When consuming a `pt-arche-*` module, derive the module block name from the repo
 # pt-arche-datadog-google-integration → datadog_google_integration
 module "datadog_google_integration" {
   source = "github.com/osinfra-io/pt-arche-datadog-google-integration?ref=<sha>"  # v0.4.1
+
+  project = var.project_id
 }
 ```
 
