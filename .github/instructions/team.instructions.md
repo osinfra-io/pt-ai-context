@@ -34,9 +34,7 @@ platform-teams/
 │   └── pt-corpus/
 ├── ekklesia/
 │   ├── pt-ekklesia-ai-context/         # team instructions (COPILOT_CUSTOM_INSTRUCTIONS_DIRS)
-│   ├── pt-ekklesia/
-│   ├── pt-ekklesia-docs/
-│   └── pt-ekklesia-repository-templates/
+│   └── pt-ekklesia-docs/
 ├── logos/
 │   ├── pt-logos-ai-context/            # team instructions (COPILOT_CUSTOM_INSTRUCTIONS_DIRS)
 │   └── pt-logos/
@@ -61,7 +59,7 @@ The platform is organized into teams (a domain of concern that may map to indivi
 - **Corpus** — Translates Logos structure into real infrastructure: GCP projects with CIS compliance, shared VPC and subnets, DNS zones, Artifact Registry, GitHub Actions service accounts, workload identity pools, and encrypted state buckets.
 - **Pneuma** — Animates Corpus projects into workload environments: GKE clusters across multiple zones, cert-manager, Istio service mesh, Datadog cluster monitoring, and OPA Gatekeeper policy enforcement.
 - **Arche** — Reusable OpenTofu child modules consumed by all three infrastructure layers. Covers GCP projects, GKE, networking, storage, Datadog integration, and all Kubernetes add-ons. The `pt-arche-core-helpers` module is foundational — providing environment detection, labels, and team naming. Check `helpers.tofu` before hardcoding any of those values.
-- **Ekklesia** — Developer portal and documentation: platform docs, Backstage running on GKE, and repository templates for new IaC projects.
+- **Ekklesia** — Platform documentation powered by GitBook.
 - **Techne** — Shared tooling: reusable GitHub Actions called workflows for OpenTofu deployments (OIDC auth, state encryption, job summaries), pre-commit hooks for IaC validation, and a GitHub Codespace for standardized developer environments.
 
 ## Code Quality Principles
@@ -348,7 +346,7 @@ The `pt-arche-*` modules have an internal dependency on `pt-arche-core-helpers`.
 
 1. **Release `pt-arche-core-helpers`** — merge PR, push tag.
 2. **Update all other `pt-arche-*` modules** — update their `helpers.tofu` to the new `pt-arche-core-helpers` SHA, open PRs, merge, push tags.
-3. **Update consumers** (`pt-corpus`, `pt-ekklesia`, `pt-pneuma`) — update their `main.tofu` / `helpers.tofu` files to the new post-merge SHAs of every `pt-arche-*` module they reference, then open/update PRs and merge.
+3. **Update consumers** (`pt-corpus`, `pt-pneuma`) — update their `main.tofu` / `helpers.tofu` files to the new post-merge SHAs of every `pt-arche-*` module they reference, then open/update PRs and merge.
 
 > **Important:** Module source `ref=` values must always point to a post-merge commit SHA on `main`, not to the SHA of the branch tip before the squash merge. After merging a PR, fetch `main` and use that SHA when updating downstream consumers.
 
