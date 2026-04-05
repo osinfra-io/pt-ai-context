@@ -59,7 +59,7 @@ The platform is organized into teams (a domain of concern that may map to indivi
 - **Corpus** — Translates Logos structure into real infrastructure: GCP projects with CIS compliance, shared VPC and subnets, DNS zones, Artifact Registry, GitHub Actions service accounts, workload identity pools, and encrypted state buckets.
 - **Pneuma** — Animates Corpus projects into workload environments: GKE clusters across multiple zones, cert-manager, Istio service mesh, Datadog cluster monitoring, and OPA Gatekeeper policy enforcement.
 - **Arche** — Reusable OpenTofu child modules consumed by all three infrastructure layers. Covers GCP projects, GKE, networking, storage, Datadog integration, and all Kubernetes add-ons. The `pt-arche-core-helpers` module is foundational — providing environment detection, labels, and team naming. Check `helpers.tofu` before hardcoding any of those values.
-- **Ekklesia** — Platform documentation powered by GitBook.
+- **Ekklesia** — Platform documentation powered by Docusaurus and deployed via GitHub Pages.
 - **Techne** — Shared tooling: reusable GitHub Actions called workflows for OpenTofu deployments (OIDC auth, state encryption, job summaries), pre-commit hooks for IaC validation, and a GitHub Codespace for standardized developer environments.
 
 ## Code Quality Principles
