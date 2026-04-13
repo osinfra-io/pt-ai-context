@@ -71,6 +71,23 @@ The platform is organized into teams (a domain of concern that may map to indivi
 - **Prefer explicit over implicit** — Make dependencies, transformations, and logic flows obvious.
 - **Write code for humans first** — Code is read far more often than it's written.
 
+## Documentation Updates
+
+The `pt-ekklesia-docs` repository is the platform's Docusaurus documentation site. When making changes that affect platform behavior, open a follow-up PR in `pt-ekklesia-docs` — documentation debt compounds quickly.
+
+**Update docs when you:**
+
+- Add or remove a resource, module, or service
+- Change a workflow, deployment process, or operational procedure
+- Introduce or retire a convention (naming, file structure, ordering)
+- Change platform architecture (new team, new layer, new dependency)
+
+**How to update:**
+
+- Find the relevant page in `pt-ekklesia-docs` and update it in place
+- If no page exists yet, create one in the most relevant section
+- Never leave a doc page describing behavior that no longer exists
+
 ## OpenTofu File Structure
 
 Every module follows this standard file layout:
