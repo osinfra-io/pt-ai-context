@@ -16,10 +16,10 @@ Platform   pt-ai-context                   ← this repo (applies to all pt-* re
 
 `COPILOT_CUSTOM_INSTRUCTIONS_DIRS` tells the GitHub Copilot CLI which directories to load custom instructions from at startup. Set it to a comma-separated list of absolute paths — no spaces around commas.
 
-The workspace is cloned at `~/repositories/osinfra-io/platform-teams/`. Each ai-context repo lives within a team subdirectory:
+The workspace is cloned at `~/repositories/osinfra-io/platform-group/`. Each ai-context repo lives within a team subdirectory:
 
 ```none
-~/repositories/osinfra-io/platform-teams/
+~/repositories/osinfra-io/platform-group/
 ├── pt-ai-context/                        ← platform-level (always include)
 ├── arche/pt-arche-ai-context/
 ├── corpus/pt-corpus-ai-context/
@@ -36,8 +36,8 @@ Always include `pt-ai-context` plus the ai-context repo for your team. If you wo
 ```bash
 # ~/.zshrc — replace <team> with your team name
 export COPILOT_CUSTOM_INSTRUCTIONS_DIRS="\
-$HOME/repositories/osinfra-io/platform-teams/pt-ai-context,\
-$HOME/repositories/osinfra-io/platform-teams/<team>/pt-<team>-ai-context"
+$HOME/repositories/osinfra-io/platform-group/pt-ai-context,\
+$HOME/repositories/osinfra-io/platform-group/<team>/pt-<team>-ai-context"
 ```
 
 | Team | Path segment |
@@ -54,13 +54,13 @@ $HOME/repositories/osinfra-io/platform-teams/<team>/pt-<team>-ai-context"
 ```bash
 # ~/.zshrc
 export COPILOT_CUSTOM_INSTRUCTIONS_DIRS="\
-$HOME/repositories/osinfra-io/platform-teams/pt-ai-context,\
-$HOME/repositories/osinfra-io/platform-teams/arche/pt-arche-ai-context,\
-$HOME/repositories/osinfra-io/platform-teams/corpus/pt-corpus-ai-context,\
-$HOME/repositories/osinfra-io/platform-teams/ekklesia/pt-ekklesia-ai-context,\
-$HOME/repositories/osinfra-io/platform-teams/logos/pt-logos-ai-context,\
-$HOME/repositories/osinfra-io/platform-teams/pneuma/pt-pneuma-ai-context,\
-$HOME/repositories/osinfra-io/platform-teams/techne/pt-techne-ai-context"
+$HOME/repositories/osinfra-io/platform-group/pt-ai-context,\
+$HOME/repositories/osinfra-io/platform-group/arche/pt-arche-ai-context,\
+$HOME/repositories/osinfra-io/platform-group/corpus/pt-corpus-ai-context,\
+$HOME/repositories/osinfra-io/platform-group/ekklesia/pt-ekklesia-ai-context,\
+$HOME/repositories/osinfra-io/platform-group/logos/pt-logos-ai-context,\
+$HOME/repositories/osinfra-io/platform-group/pneuma/pt-pneuma-ai-context,\
+$HOME/repositories/osinfra-io/platform-group/techne/pt-techne-ai-context"
 ```
 
 After editing your shell profile, reload it:
@@ -68,3 +68,10 @@ After editing your shell profile, reload it:
 ```bash
 source ~/.zshrc
 ```
+
+> **Note:** `COPILOT_CUSTOM_INSTRUCTIONS_DIRS` is shell-scoped. It only exists in shells that
+> have sourced the profile where it is exported (e.g. `~/.zshrc`). If Copilot is launched from
+> a context that does not load that profile — a different shell (bash), a GUI launcher, or an
+> automation/CI step — the variable is unset and **none** of these custom instructions load,
+> which looks like Copilot "ignoring" them. Export it from a profile that every shell you use
+> to launch Copilot will source.

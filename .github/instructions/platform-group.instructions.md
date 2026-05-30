@@ -1,5 +1,5 @@
 ---
-applyTo: "**/pt-*/**"
+applyTo: "**"
 ---
 
 # GitHub Copilot Workspace Instructions
@@ -432,8 +432,8 @@ All work follows [GitHub Flow](https://docs.github.com/en/get-started/using-gith
 Delete local branches after PRs are merged. When performing bulk operations across repos, verify each repo's unique structure before applying changes.
 
 **Instruction file structure:** Instructions are organized at three levels:
-- **Platform-level** — `pt-ai-context/.github/instructions/team.instructions.md` (this file)
-- **Team-level** — `pt-*-ai-context/.github/instructions/team.instructions.md` (one per team)
+- **Platform-level** — `pt-ai-context/.github/instructions/platform-group.instructions.md` (this file)
+- **Team-level** — `pt-*-ai-context/.github/instructions/<team>-team.instructions.md` (one per team)
 - **Repo-level** — `.github/copilot-instructions.md` in each repository
 
 When adding a new repository, create `.github/copilot-instructions.md` with a brief description of what the repo does.
