@@ -1,8 +1,8 @@
 ---
-applyTo: "**/pt-*/**"
+applyTo: "**"
 ---
 
-# GitHub Copilot Workspace Instructions
+# Platform Group Instructions
 
 ## Ignored Directories
 
@@ -13,8 +13,8 @@ applyTo: "**/pt-*/**"
 This VS Code workspace aggregates all platform team repositories into a single multi-root workspace. Each top-level directory is a collection of related repositories. **Keep this tree up to date when repositories are added or removed.**
 
 ```
-platform-teams/
-├── pt-ai-context/                      # platform instructions (COPILOT_CUSTOM_INSTRUCTIONS_DIRS)
+platform-group/
+├── pt-ai-context/                      # platform group instructions (COPILOT_CUSTOM_INSTRUCTIONS_DIRS)
 ├── arche/
 │   ├── pt-arche-ai-context/            # team instructions (COPILOT_CUSTOM_INSTRUCTIONS_DIRS)
 │   ├── pt-arche-child-module-template/
@@ -300,13 +300,13 @@ resource "example" "this" {
   cd regional/zone-b && ln -s ../shared/backend.tofu backend.tofu
   ```
 
-Infrastructure teams follow a three-tier deployment workflow unless team-level instructions say otherwise:
+Infrastructure teams follow a three-tier deployment workflow unless a platform team's instructions say otherwise:
 
 - **`sandbox.yml`** — runs on pull requests; deploys to sandbox
 - **`non-production.yml`** — runs on merge to `main`; deploys to non-production
 - **`production.yml`** — runs automatically after non-production succeeds
 
-Each workflow deploys the main workspace first, then if required, regional jobs (which `needs: main`) run after it completes. Team-level instructions document additional job ordering for subdirectory workspaces.
+Each workflow deploys the main workspace first, then if required, regional jobs (which `needs: main`) run after it completes. Platform team instructions document additional job ordering for subdirectory workspaces.
 
 ### Remote State
 
@@ -432,8 +432,8 @@ All work follows [GitHub Flow](https://docs.github.com/en/get-started/using-gith
 Delete local branches after PRs are merged. When performing bulk operations across repos, verify each repo's unique structure before applying changes.
 
 **Instruction file structure:** Instructions are organized at three levels:
-- **Platform-level** — `pt-ai-context/.github/instructions/team.instructions.md` (this file)
-- **Team-level** — `pt-*-ai-context/.github/instructions/team.instructions.md` (one per team)
-- **Repo-level** — `.github/copilot-instructions.md` in each repository
+- **Platform Group** — `pt-ai-context/.github/instructions/platform-group.instructions.md` (this file)
+- **Platform Team** — `pt-*-ai-context/.github/instructions/<team>-team.instructions.md` (one per team)
+- **Repository** — `.github/copilot-instructions.md` in each repository
 
 When adding a new repository, create `.github/copilot-instructions.md` with a brief description of what the repo does.
