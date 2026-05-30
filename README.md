@@ -1,15 +1,15 @@
-# Platform Team AI Context
+# Platform Group AI Context
 
-Platform-level Copilot instructions for the [osinfra-io](https://github.com/osinfra-io) platform teams workspace.
+Platform Group Copilot instructions for the [osinfra-io](https://github.com/osinfra-io) platform. This is the group-level layer of the instruction hierarchy and applies universally to every platform team's repositories.
 
 ## Overview
 
-This repository is the **platform level** of a three-level GitHub Copilot instruction hierarchy. Instructions here apply universally to every `pt-*` repository across all teams.
+This repository is the **Platform Group** level of a three-level GitHub Copilot instruction hierarchy. Instructions here apply universally to every `pt-*` repository across all platform teams.
 
 ```none
-Platform   pt-ai-context                   ← this repo (applies to all pt-* repos)
-  └── Team   pt-*-ai-context               ← one per team (applies to that team's repos)
-        └── Repo   .github/copilot-instructions.md   ← in every repo (repo-specific only)
+Platform Group   pt-ai-context                   ← this repo (applies to all pt-* repos)
+  └── Platform Team   pt-*-ai-context             ← one per team (applies to that team's repos)
+        └── Repository   .github/copilot-instructions.md   ← in every repo (repo-specific only)
 ```
 
 ## Setup
@@ -20,7 +20,7 @@ The workspace is cloned at `~/repositories/osinfra-io/platform-group/`. Each ai-
 
 ```none
 ~/repositories/osinfra-io/platform-group/
-├── pt-ai-context/                        ← platform-level (always include)
+├── pt-ai-context/                        ← platform group (always include)
 ├── arche/pt-arche-ai-context/
 ├── corpus/pt-corpus-ai-context/
 ├── ekklesia/pt-ekklesia-ai-context/
