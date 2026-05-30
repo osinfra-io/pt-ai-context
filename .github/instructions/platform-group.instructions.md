@@ -43,8 +43,10 @@ platform-group/
 │   ├── pt-pneuma/
 │   └── pt-pneuma-istio-test/
 └── techne/
+    ├── pt-techne-agents/
     ├── pt-techne-ai-context/           # team instructions (COPILOT_CUSTOM_INSTRUCTIONS_DIRS)
     ├── pt-techne-development-setup/
+    ├── pt-techne-mcp-server/
     ├── pt-techne-misc-workflows/
     ├── pt-techne-opentofu-codespace/
     ├── pt-techne-opentofu-workflows/
