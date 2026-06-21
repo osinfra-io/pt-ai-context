@@ -15,6 +15,7 @@ This VS Code workspace aggregates all platform team repositories into a single m
 ```
 platform-group/
 ├── pt-ai-context/                      # platform group instructions (COPILOT_CUSTOM_INSTRUCTIONS_DIRS)
+├── pt-ai-plugins/                      # platform group Copilot CLI plugins + marketplace
 ├── arche/
 │   ├── pt-arche-ai-context/            # team instructions (COPILOT_CUSTOM_INSTRUCTIONS_DIRS)
 │   ├── pt-arche-child-module-template/
@@ -439,3 +440,5 @@ Delete local branches after PRs are merged. When performing bulk operations acro
 - **Repository** — `.github/copilot-instructions.md` in each repository
 
 When adding a new repository, create `.github/copilot-instructions.md` with a brief description of what the repo does.
+
+**Plugins & marketplace:** Installable Copilot CLI capabilities (skills, agents, MCP servers) are distributed separately from instructions through the `pt-ai-plugins` repository and its `osinfra-io` marketplace. Plugins **complement** instructions — `plugin.json` has no field for custom instructions, so the three-level instruction hierarchy above is unaffected. Register the marketplace with `copilot plugin marketplace add osinfra-io/pt-ai-plugins`; see `pt-ai-plugins/README.md`.

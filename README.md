@@ -75,3 +75,14 @@ source ~/.zshrc
 > automation/CI step — the variable is unset and **none** of these custom instructions load,
 > which looks like Copilot "ignoring" them. Export it from a profile that every shell you use
 > to launch Copilot will source.
+
+## Plugins and marketplace
+
+Custom instructions are the **always-on** layer. Installable Copilot CLI **capabilities** — skills, agents, and MCP servers — are distributed separately through the complementary [`pt-ai-plugins`](https://github.com/osinfra-io/pt-ai-plugins) repository and its `osinfra-io` marketplace.
+
+Plugins do not replace instructions: the `plugin.json` manifest has no field for `copilot-instructions.md` or `*.instructions.md`, so the hierarchy described above is unaffected. Use `COPILOT_CUSTOM_INSTRUCTIONS_DIRS` for instructions and the marketplace for capabilities:
+
+```bash
+copilot plugin marketplace add osinfra-io/pt-ai-plugins
+copilot plugin marketplace browse osinfra-io
+```
