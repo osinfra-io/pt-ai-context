@@ -197,13 +197,13 @@ resource "example" "this" {
 
 ## Pre-Commit Workflow (Mandatory)
 
-**`pre-commit run -a` must be run after ANY change in this workspace.** Do not wait to be asked.
+**`pre-commit run -a` must be run before committing in this workspace.** Do not wait to be asked.
 
 Run `pre-commit autoupdate --freeze` once at the start of a session before the first `pre-commit run -a`.
 
 ```bash
 pre-commit autoupdate --freeze   # run once per session to update hooks and pin to commit SHAs
-pre-commit run -a                # run after every change; enforces fmt, validate, docs, security
+pre-commit run -a                # run before committing; enforces fmt, validate, docs, security
 ```
 
 Pre-commit hooks enforce: `tofu fmt`, `tofu validate`, `tofu test`, YAML validation, documentation generation, and trailing whitespace fixes.
