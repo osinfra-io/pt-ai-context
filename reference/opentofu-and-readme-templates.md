@@ -8,12 +8,12 @@ Files that begin with a two-line file header (`# <Display Name>` / `# <URL>`):
 
 | File | Header |
 | --- | --- |
-| `variables.tofu` | `# Input Variables` / `https://opentofu.org/docs/language/values/variables` |
-| `outputs.tofu` | `# Output Values` / `https://opentofu.org/docs/language/values/outputs` |
-| `locals.tofu` | `# Local Values` / `https://opentofu.org/docs/language/values/locals` |
-| `backend.tofu` | `# Backend Configuration` / `https://opentofu.org/docs/language/settings/backends/configuration` |
-| `moved.tofu` | `# Moved Blocks` / `https://opentofu.org/docs/language/moved` |
-| `helpers.tofu` | `# OpenTofu Core Helpers Module (osinfra.io)` / `https://github.com/osinfra-io/pt-arche-core-helpers` |
+| `variables.tofu` | `# Input Variables` / `# https://opentofu.org/docs/language/values/variables` |
+| `outputs.tofu` | `# Output Values` / `# https://opentofu.org/docs/language/values/outputs` |
+| `locals.tofu` | `# Local Values` / `# https://opentofu.org/docs/language/values/locals` |
+| `backend.tofu` | `# Backend Configuration` / `# https://opentofu.org/docs/language/settings/backends/configuration` |
+| `moved.tofu` | `# Moved Blocks` / `# https://opentofu.org/docs/language/moved` |
+| `helpers.tofu` | `# OpenTofu Core Helpers Module (osinfra.io)` / `# https://github.com/osinfra-io/pt-arche-core-helpers` |
 | `providers.tofu` | begins directly with a `terraform {}` block — no file header |
 | `main.tofu` | no file-level header — begins directly with the first resource or module block comment |
 | `data.tofu` | no file-level header — begins directly with the first data source block comment |
