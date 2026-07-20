@@ -107,60 +107,11 @@ Every module follows this standard file layout:
 | `backend.tofu` | State backend configuration |
 | `moved.tofu` | Resource renames and moves |
 
-The following files begin with a two-line file header:
-
-```hcl
-# <Display Name>
-# <URL>
-```
-
-| File | Header |
-| --- | --- |
-| `variables.tofu` | `# Input Variables` / `https://opentofu.org/docs/language/values/variables` |
-| `outputs.tofu` | `# Output Values` / `https://opentofu.org/docs/language/values/outputs` |
-| `locals.tofu` | `# Local Values` / `https://opentofu.org/docs/language/values/locals` |
-| `backend.tofu` | `# Backend Configuration` / `https://opentofu.org/docs/language/settings/backends/configuration` |
-| `moved.tofu` | `# Moved Blocks` / `https://opentofu.org/docs/language/moved` |
-| `helpers.tofu` | `# OpenTofu Core Helpers Module (osinfra.io)` / `https://github.com/osinfra-io/pt-arche-core-helpers` |
-| `providers.tofu` | begins directly with a `terraform {}` block — no file header |
-| `main.tofu` | no file-level header — begins directly with the first resource or module block comment |
-| `data.tofu` | no file-level header — begins directly with the first data source block comment |
+Certain files begin with a two-line file header (`# <Display Name>` / `# <URL>`); `providers.tofu` begins directly with a `terraform {}` block, and `main.tofu` / `data.tofu` have no file-level header (they begin with the first block comment). For the exact per-file header text, see [`reference/opentofu-and-readme-templates.md`](../../reference/opentofu-and-readme-templates.md).
 
 A blank line after the header is followed optionally by additional `#` comment lines describing the file's specific purpose (e.g. what the locals transform, what the outputs expose).
 
-In `main.tofu` and `data.tofu`, each group of `resource`, `data`, or `module` blocks that share the same type (or same module source) is preceded by a single comment block. The comment appears **once per type or shared module source**, before the first block of that group — not before every individual block. All module blocks sharing the same source must be kept **contiguous** (grouped together) so they fall under one heading:
-
-```hcl
-# <Resource, Data Source, or Module Display Name>
-# <URL to provider docs or GitHub repo>
-# <optional: additional context lines>
-
-resource "google_project" "this" {
-```
-
-For example, multiple `kubernetes_manifest` resources share one heading:
-
-```hcl
-# Kubernetes Manifest Resource
-# https://search.opentofu.org/provider/hashicorp/kubernetes/latest/docs/resources/manifest
-
-resource "kubernetes_manifest" "istio_gateway" { ... }
-
-resource "kubernetes_manifest" "istio_peer_authentication" { ... }
-```
-
-Multiple modules consuming the same source share one heading:
-
-```hcl
-# Datadog Google Cloud Platform Integration Module (osinfra.io)
-# https://github.com/osinfra-io/pt-arche-datadog-google-integration
-
-module "datadog_google_integration" { ... }
-
-module "datadog_google_integration_team_kubernetes_projects" { ... }
-
-module "datadog_google_integration_team_projects" { ... }
-```
+In `main.tofu` and `data.tofu`, each group of `resource`, `data`, or `module` blocks that share the same type (or same module source) is preceded by a single comment block. The comment appears **once per type or shared module source**, before the first block of that group — not before every individual block. All module blocks sharing the same source must be kept **contiguous** (grouped together) so they fall under one heading. See [`reference/opentofu-and-readme-templates.md`](../../reference/opentofu-and-readme-templates.md) for heading examples (single resource type, repeated `kubernetes_manifest` resources, and multiple modules sharing one source).
 
 Use the provider's documentation URL (e.g. `https://search.opentofu.org/provider/...`) for resource and data blocks. Use the GitHub repo URL (e.g. `https://github.com/osinfra-io/pt-arche-...`) for module blocks. Always validate that comment URLs resolve correctly before adding or approving them.
 
@@ -178,23 +129,7 @@ Use the provider's documentation URL (e.g. `https://search.opentofu.org/provider
 - Functions: single-line for simple calls; multi-line for complex nested functions
 - Indentation: 2 spaces (enforced by `tofu fmt`)
 
-```hcl
-resource "example" "this" {
-  description = "Example resource"
-
-  labels = {
-    env  = "production"
-    team = "platform"
-  }
-
-  name = "example"
-
-  tags = [
-    "platform",
-    "production",
-  ]
-}
-```
+See [`reference/opentofu-and-readme-templates.md`](../../reference/opentofu-and-readme-templates.md) for a worked block-formatting example.
 
 ## Pre-Commit Workflow (Mandatory)
 
@@ -376,29 +311,12 @@ All README files include status badges immediately after the title (before any o
 
 Badge order (include only those that apply):
 
-1. **Copilot Agent** — repos containing `.github/agents/`:
+1. **Copilot Agent** — repos containing `.github/agents/`
+2. **OpenTofu Tests** — repos with a `test.yml` workflow
+3. **Dependabot** — repos with a `dependabot.yml` workflow
+4. **Datadog Security** — repos containing IaC (OpenTofu)
 
-```markdown
-[![Copilot Agent](https://img.shields.io/badge/Copilot%20Agent-Enabled-6E40C9?style=for-the-badge&logo=githubcopilot&logoColor=white)](https://github.com/osinfra-io/<repo>/tree/main/.github/agents)
-```
-
-2. **OpenTofu Tests** — repos with a `test.yml` workflow:
-
-```markdown
-[![OpenTofu Tests](https://img.shields.io/github/actions/workflow/status/osinfra-io/<repo>/test.yml?style=for-the-badge&logo=opentofu&color=FEDA15&label=OpenTofu%20Tests)](https://github.com/osinfra-io/<repo>/actions/workflows/test.yml)
-```
-
-3. **Dependabot** — repos with a `dependabot.yml` workflow:
-
-```markdown
-[![Dependabot](https://img.shields.io/github/actions/workflow/status/osinfra-io/<repo>/dependabot.yml?style=for-the-badge&logo=github&color=2088FF&label=Dependabot)](https://github.com/osinfra-io/<repo>/actions/workflows/dependabot.yml)
-```
-
-4. **Datadog Security** — repos containing IaC (OpenTofu):
-
-```markdown
-[![Datadog Security Enabled](https://img.shields.io/badge/Datadog%20Security-Enabled-632CA6?style=for-the-badge&logo=datadog)](https://app.datadoghq.com/security/code-security/repositories?repository_id=<repo>)
-```
+For the exact badge markdown, see [`reference/opentofu-and-readme-templates.md`](../../reference/opentofu-and-readme-templates.md).
 
 ### Markdown
 
