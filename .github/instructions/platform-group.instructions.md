@@ -10,49 +10,7 @@ applyTo: "**"
 
 ## Workspace Overview
 
-This VS Code workspace aggregates all platform team repositories into a single multi-root workspace. Each top-level directory is a collection of related repositories. **Keep this tree up to date when repositories are added or removed.**
-
-```
-platform-group/
-├── pt-ai-context/                      # platform group instructions (COPILOT_CUSTOM_INSTRUCTIONS_DIRS)
-├── pt-ai-plugins/                      # platform group Copilot CLI plugins + marketplace
-├── arche/
-│   ├── pt-arche-ai-context/            # team instructions (COPILOT_CUSTOM_INSTRUCTIONS_DIRS)
-│   ├── pt-arche-child-module-template/
-│   ├── pt-arche-core-helpers/
-│   ├── pt-arche-datadog-google-integration/
-│   ├── pt-arche-google-cloud-sql/
-│   ├── pt-arche-google-kubernetes-engine/
-│   ├── pt-arche-google-network/
-│   ├── pt-arche-google-project/
-│   ├── pt-arche-google-storage-bucket/
-│   ├── pt-arche-kubernetes-cert-manager/
-│   ├── pt-arche-kubernetes-datadog-operator/
-│   ├── pt-arche-kubernetes-istio/
-│   └── pt-arche-kubernetes-opa-gatekeeper/
-├── corpus/
-│   ├── pt-corpus-ai-context/           # team instructions (COPILOT_CUSTOM_INSTRUCTIONS_DIRS)
-│   └── pt-corpus/
-├── ekklesia/
-│   ├── pt-ekklesia-ai-context/         # team instructions (COPILOT_CUSTOM_INSTRUCTIONS_DIRS)
-│   └── pt-ekklesia-docs/
-├── logos/
-│   ├── pt-logos-ai-context/            # team instructions (COPILOT_CUSTOM_INSTRUCTIONS_DIRS)
-│   └── pt-logos/
-├── pneuma/
-│   ├── pt-pneuma-ai-context/           # team instructions (COPILOT_CUSTOM_INSTRUCTIONS_DIRS)
-│   ├── pt-pneuma/
-│   └── pt-pneuma-istio-test/
-└── techne/
-    ├── pt-techne-agents/
-    ├── pt-techne-ai-context/           # team instructions (COPILOT_CUSTOM_INSTRUCTIONS_DIRS)
-    ├── pt-techne-development-setup/
-    ├── pt-techne-mcp-server/
-    ├── pt-techne-misc-workflows/
-    ├── pt-techne-opentofu-codespace/
-    ├── pt-techne-opentofu-workflows/
-    └── pt-techne-pre-commit-hooks/
-```
+This VS Code workspace aggregates all platform team repositories into a single multi-root workspace. For the full repository inventory, see the **Workspace repository tree** section in `pt-ai-context/README.md`; keep that on-demand reference up to date when repositories are added or removed. When you need to inspect the current checkout shape locally, run `find . -maxdepth 2 -type d | sort` from `platform-group/`.
 
 ## Platform Architecture
 
@@ -116,6 +74,7 @@ In `main.tofu` and `data.tofu`, each group of `resource`, `data`, or `module` bl
 Use the provider's documentation URL (e.g. `https://search.opentofu.org/provider/...`) for resource and data blocks. Use the GitHub repo URL (e.g. `https://github.com/osinfra-io/pt-arche-...`) for module blocks. Always validate that comment URLs resolve correctly before adding or approving them.
 
 **Ordering rules:**
+
 - Variables, outputs, locals, `.tfvars` entries: alphabetical
 - In `main.tofu`: all `module` blocks first, then all `resource` blocks (sorted alphabetically by type, e.g. `google_compute_network` before `google_project`, then by name when types match, e.g. `"alpha"` before `"beta"`). Module blocks are grouped by source — all module blocks that share the same source URL are kept **contiguous** under a single heading, sorted alphabetically by module name within that group. Source groups are ordered alphabetically by source URL (e.g. `github.com/osinfra-io/pt-arche-core-helpers` before `github.com/osinfra-io/pt-arche-google-project`). In `data.tofu`: all `data` blocks sorted alphabetically by type, then by name.
 - Blocks that use `for_each` should have a plural name **only when `for_each` iterates over instances of the named thing** (e.g. `module "google_projects"` iterating over projects, `resource "google_dns_record_set" "team_ns_delegations"` iterating over delegations). Keep the name singular when `for_each` iterates over a different dimension (e.g. `resource "google_storage_bucket_iam_member" "cloud_cost_management"` iterating over roles for one bucket). Exception: `"this"` is always acceptable regardless of `for_each`.
@@ -125,6 +84,7 @@ Use the provider's documentation URL (e.g. `https://search.opentofu.org/provider
 - Exception: logical grouping is allowed for team membership variables when annotated with a comment
 
 **Formatting rules:**
+
 - Lists and maps: empty newline before and after, unless they are the first or last argument in the block
 - Functions: single-line for simple calls; multi-line for complex nested functions
 - Indentation: 2 spaces (enforced by `tofu fmt`)
@@ -353,6 +313,7 @@ All work follows [GitHub Flow](https://docs.github.com/en/get-started/using-gith
 Delete local branches after PRs are merged. When performing bulk operations across repos, verify each repo's unique structure before applying changes.
 
 **Instruction file structure:** Instructions are organized at three levels:
+
 - **Platform Group** — `pt-ai-context/.github/instructions/platform-group.instructions.md` (this file)
 - **Platform Team** — `pt-*-ai-context/.github/instructions/<team>-team.instructions.md` (one per team)
 - **Repository** — `.github/copilot-instructions.md` in each repository
