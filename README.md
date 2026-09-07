@@ -1,6 +1,6 @@
 # Platform Group AI Context
 
-Platform Group Copilot instructions for the [osinfra-io](https://github.com/osinfra-io) platform. This is the group-level layer of the instruction hierarchy and applies universally to every platform team's repositories.
+Platform Group Copilot instructions for the [osinfra-io](https://github.com/osinfra-io) platform. This is the group-level layer of the instruction hierarchy and applies universally to every `pt-*` repository across all platform teams.
 
 ## Overview
 
@@ -10,6 +10,52 @@ This repository is the **Platform Group** level of a three-level GitHub Copilot 
 Platform Group   pt-ai-context                   ← this repo (applies to all pt-* repos)
   └── Platform Team   pt-*-ai-context             ← one per team (applies to that team's repos)
         └── Repository   .github/copilot-instructions.md   ← in every repo (repo-specific only)
+```
+
+## Workspace repository tree
+
+This is the on-demand reference copy of the current multi-root `platform-group/` workspace inventory. Keep it up to date when repositories are added or removed.
+
+```none
+platform-group/
+├── pt-ai-context/                      # platform group instructions (COPILOT_CUSTOM_INSTRUCTIONS_DIRS)
+├── pt-ai-plugins/                      # platform group Copilot CLI plugins + marketplace
+├── arche/
+│   ├── pt-arche-ai-context/            # team instructions (COPILOT_CUSTOM_INSTRUCTIONS_DIRS)
+│   ├── pt-arche-child-module-template/
+│   ├── pt-arche-core-helpers/
+│   ├── pt-arche-datadog-google-integration/
+│   ├── pt-arche-google-cloud-sql/
+│   ├── pt-arche-google-kubernetes-engine/
+│   ├── pt-arche-google-network/
+│   ├── pt-arche-google-project/
+│   ├── pt-arche-google-storage-bucket/
+│   ├── pt-arche-kubernetes-cert-manager/
+│   ├── pt-arche-kubernetes-datadog-operator/
+│   ├── pt-arche-kubernetes-istio/
+│   └── pt-arche-kubernetes-opa-gatekeeper/
+├── corpus/
+│   ├── pt-corpus-ai-context/           # team instructions (COPILOT_CUSTOM_INSTRUCTIONS_DIRS)
+│   └── pt-corpus/
+├── ekklesia/
+│   ├── pt-ekklesia-ai-context/         # team instructions (COPILOT_CUSTOM_INSTRUCTIONS_DIRS)
+│   └── pt-ekklesia-docs/
+├── logos/
+│   ├── pt-logos-ai-context/            # team instructions (COPILOT_CUSTOM_INSTRUCTIONS_DIRS)
+│   └── pt-logos/
+├── pneuma/
+│   ├── pt-pneuma-ai-context/           # team instructions (COPILOT_CUSTOM_INSTRUCTIONS_DIRS)
+│   ├── pt-pneuma/
+│   └── pt-pneuma-istio-test/
+└── techne/
+    ├── pt-techne-agents/
+    ├── pt-techne-ai-context/           # team instructions (COPILOT_CUSTOM_INSTRUCTIONS_DIRS)
+    ├── pt-techne-development-setup/
+    ├── pt-techne-mcp-server/
+    ├── pt-techne-misc-workflows/
+    ├── pt-techne-opentofu-codespace/
+    ├── pt-techne-opentofu-workflows/
+    └── pt-techne-pre-commit-hooks/
 ```
 
 ## Setup
