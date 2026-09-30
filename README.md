@@ -30,6 +30,7 @@ platform-group/
 │   ├── pt-arche-google-network/
 │   ├── pt-arche-google-project/
 │   ├── pt-arche-google-storage-bucket/
+│   ├── pt-arche-kubernetes-agentgateway/
 │   ├── pt-arche-kubernetes-authentik/
 │   ├── pt-arche-kubernetes-cert-manager/
 │   ├── pt-arche-kubernetes-datadog-operator/
