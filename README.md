@@ -45,9 +45,6 @@ platform-group/
 ├── logos/
 │   ├── pt-logos-ai-context/            # team instructions (COPILOT_CUSTOM_INSTRUCTIONS_DIRS)
 │   └── pt-logos/
-├── kryptos/
-│   ├── pt-kryptos-ai-context/          # team instructions (COPILOT_CUSTOM_INSTRUCTIONS_DIRS)
-│   └── pt-kryptos/
 ├── pneuma/
 │   ├── pt-pneuma-ai-context/           # team instructions (COPILOT_CUSTOM_INSTRUCTIONS_DIRS)
 │   ├── pt-pneuma/
@@ -76,7 +73,6 @@ The workspace is cloned at `~/repositories/osinfra-io/platform-group/`. Each ai-
 ├── corpus/pt-corpus-ai-context/
 ├── ekklesia/pt-ekklesia-ai-context/
 ├── logos/pt-logos-ai-context/
-├── kryptos/pt-kryptos-ai-context/
 ├── pneuma/pt-pneuma-ai-context/
 └── techne/pt-techne-ai-context/
 ```
@@ -98,7 +94,6 @@ $HOME/repositories/osinfra-io/platform-group/<team>/pt-<team>-ai-context"
 | corpus | `corpus/pt-corpus-ai-context` |
 | ekklesia | `ekklesia/pt-ekklesia-ai-context` |
 | logos | `logos/pt-logos-ai-context` |
-| kryptos | `kryptos/pt-kryptos-ai-context` |
 | pneuma | `pneuma/pt-pneuma-ai-context` |
 | techne | `techne/pt-techne-ai-context` |
 
@@ -112,7 +107,6 @@ $HOME/repositories/osinfra-io/platform-group/arche/pt-arche-ai-context,\
 $HOME/repositories/osinfra-io/platform-group/corpus/pt-corpus-ai-context,\
 $HOME/repositories/osinfra-io/platform-group/ekklesia/pt-ekklesia-ai-context,\
 $HOME/repositories/osinfra-io/platform-group/logos/pt-logos-ai-context,\
-$HOME/repositories/osinfra-io/platform-group/kryptos/pt-kryptos-ai-context,\
 $HOME/repositories/osinfra-io/platform-group/pneuma/pt-pneuma-ai-context,\
 $HOME/repositories/osinfra-io/platform-group/techne/pt-techne-ai-context"
 ```
