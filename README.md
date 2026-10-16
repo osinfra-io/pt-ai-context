@@ -35,6 +35,7 @@ platform-group/
 │   ├── pt-arche-kubernetes-cert-manager/
 │   ├── pt-arche-kubernetes-datadog-operator/
 │   ├── pt-arche-kubernetes-istio/
+│   ├── pt-arche-kubernetes-openbao/
 │   └── pt-arche-kubernetes-opa-gatekeeper/
 ├── corpus/
 │   ├── pt-corpus-ai-context/           # team instructions (COPILOT_CUSTOM_INSTRUCTIONS_DIRS)
