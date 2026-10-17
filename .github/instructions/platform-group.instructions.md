@@ -166,7 +166,7 @@ module "datadog_google_integration_team_projects" { ... }
 
 ### Lifecycle
 
-- Use `prevent_destroy = true` for critical infrastructure (KMS keys, state buckets, admin accounts)
+- In root modules, use `prevent_destroy = true` for critical infrastructure (KMS keys, state buckets, admin accounts). `pt-arche-*` child modules never declare it; see the Arche team instructions
 - Use `ignore_changes` for externally managed fields
 - Prefer `enabled` (OpenTofu v1.11+) over `count` for conditional resource creation:
 
