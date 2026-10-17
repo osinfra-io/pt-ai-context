@@ -254,6 +254,7 @@ The `pt-arche-core-helpers` module is invoked from every root module's `helpers.
 | `module.core_helpers.labels` | Standard resource labels map — apply to all GCP resources |
 | `module.core_helpers.project_naming` | Struct with `.prefix` and `.description` for project creation |
 | `module.core_helpers.region` | Current deployment region |
+| `module.core_helpers.repository` | Repository name; used to derive the state bucket name |
 | `module.core_helpers.team` | Current team identifier (e.g. `pt-pneuma`) |
 | `module.core_helpers.teams` | Map of all team data from pt-logos (folders, identity groups, GitHub repos, etc.) |
 | `module.core_helpers.zone` | Current deployment zone (zonal subdirectories only) |
