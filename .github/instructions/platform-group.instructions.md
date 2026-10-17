@@ -210,9 +210,17 @@ Infrastructure teams follow a three-tier deployment workflow unless a platform t
 
 Each workflow deploys the main workspace first, then if required, regional jobs (which `needs: main`) run after it completes. Platform team instructions document additional job ordering for subdirectory workspaces.
 
+### State Encryption and Backend
+
+The called workflows supply state encryption and the backend, so root modules never declare `state_*` variables:
+
+- `TF_ENCRYPTION` provides the default `gcp_kms` key provider, `aes_gcm` method (`method.aes_gcm.default`), and enforced plan/state encryption. It is merged with the root module's `encryption {}` block, which only holds repo-specific settings such as the `logos` key provider and `remote_state_data_sources`.
+- `GOOGLE_KMS_ENCRYPTION_KEY` and `tofu init -backend-config` (bucket, prefix) configure the GCS backend, so `backend.tofu` is an empty `backend "gcs" {}`.
+- Never add `plan`/`state` encryption blocks, unencrypted fallbacks, or `kms_encryption_key` arguments to root modules.
+
 ### Remote State
 
-`terraform_remote_state` is only used within the same repository (e.g. a regional workspace reading its own main state). Cross-repo state is never accessed via `terraform_remote_state` — it is consumed exclusively through `module.core_helpers`.
+`terraform_remote_state` is only used within the same repository (e.g. a regional workspace reading its own main state; derive its bucket in `locals.tofu` as `"${module.core_helpers.repository}-state-${module.core_helpers.env}"`). Cross-repo state is never accessed via `terraform_remote_state` — it is consumed exclusively through `module.core_helpers`.
 
 ### Environments
 
