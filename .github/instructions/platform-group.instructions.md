@@ -210,9 +210,17 @@ Infrastructure teams follow a three-tier deployment workflow unless a platform t
 
 Each workflow deploys the main workspace first, then if required, regional jobs (which `needs: main`) run after it completes. Platform team instructions document additional job ordering for subdirectory workspaces.
 
+### State Encryption and Backend
+
+The called workflows supply state encryption and the backend, so root modules never declare `state_*` variables:
+
+- `TF_ENCRYPTION` provides the default `gcp_kms` key provider, `aes_gcm` method (`method.aes_gcm.default`), and enforced plan/state encryption. It is merged with the root module's `encryption {}` block, which only holds repo-specific settings such as the `logos` key provider and `remote_state_data_sources`.
+- `GOOGLE_KMS_ENCRYPTION_KEY` and `tofu init -backend-config` (bucket, prefix) configure the GCS backend, so `backend.tofu` is an empty `backend "gcs" {}`.
+- Never add `plan`/`state` encryption blocks, unencrypted fallbacks, or `kms_encryption_key` arguments to root modules.
+
 ### Remote State
 
-`terraform_remote_state` is only used within the same repository (e.g. a regional workspace reading its own main state). Cross-repo state is never accessed via `terraform_remote_state` — it is consumed exclusively through `module.core_helpers`.
+`terraform_remote_state` is only used within the same repository (e.g. a regional workspace reading its own main state; derive its bucket in `locals.tofu` as `"${module.core_helpers.repository}-state-${module.core_helpers.env}"`). Cross-repo state is never accessed via `terraform_remote_state` — it is consumed exclusively through `module.core_helpers`.
 
 ### Environments
 
@@ -246,6 +254,7 @@ The `pt-arche-core-helpers` module is invoked from every root module's `helpers.
 | `module.core_helpers.labels` | Standard resource labels map — apply to all GCP resources |
 | `module.core_helpers.project_naming` | Struct with `.prefix` and `.description` for project creation |
 | `module.core_helpers.region` | Current deployment region |
+| `module.core_helpers.repository` | Repository name; used to derive the state bucket name |
 | `module.core_helpers.team` | Current team identifier (e.g. `pt-pneuma`) |
 | `module.core_helpers.teams` | Map of all team data from pt-logos (folders, identity groups, GitHub repos, etc.) |
 | `module.core_helpers.zone` | Current deployment zone (zonal subdirectories only) |
