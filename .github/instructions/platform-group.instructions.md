@@ -19,7 +19,7 @@ The platform is organized into teams (a domain of concern that may map to indivi
 - **Logos** — Creates GCP folder hierarchy, Google Identity groups, GitHub teams and repositories, and Datadog teams. Everything downstream depends on its outputs.
 - **Corpus** — Translates Logos structure into real infrastructure: GCP projects with CIS compliance, shared VPC and subnets, DNS zones, Artifact Registry, GitHub Actions service accounts, workload identity pools, and encrypted state buckets.
 - **Pneuma** — Animates Corpus projects into workload environments: GKE clusters across multiple zones, cert-manager, Istio service mesh, Datadog cluster monitoring, and OPA Gatekeeper policy enforcement.
-- **Arche** — Reusable OpenTofu child modules consumed by all three infrastructure layers. Covers GCP projects, GKE, networking, storage, Datadog integration, and all Kubernetes add-ons. The `pt-arche-core-helpers` module is foundational — providing environment detection, labels, and team naming. Check `helpers.tofu` before hardcoding any of those values.
+- **Arche** — Reusable OpenTofu child modules consumed by Corpus and Pneuma (Logos reads only the `pt-arche-core-helpers` root module state, it does not consume child modules). Covers GCP projects, GKE, networking, storage, Datadog integration, and all Kubernetes add-ons. The `pt-arche-core-helpers` module is foundational — providing environment detection, labels, and team naming. Check `helpers.tofu` before hardcoding any of those values.
 - **Ekklesia** — Platform documentation powered by Docusaurus and deployed via GitHub Pages.
 - **Techne** — Shared tooling: reusable GitHub Actions called workflows for OpenTofu deployments (OIDC auth, state encryption, job summaries), pre-commit hooks for IaC validation, and a GitHub Codespace for standardized developer environments.
 
@@ -34,7 +34,7 @@ The platform is organized into teams (a domain of concern that may map to indivi
 
 ## Documentation Updates
 
-The `pt-ekklesia-docs` repository is the platform's Docusaurus documentation site. When making changes that affect platform behavior, open a follow-up PR in `pt-ekklesia-docs` — documentation debt compounds quickly.
+The `pt-ekklesia-docs` repository is the platform's Docusaurus documentation site. When making changes that affect platform behavior, open a PR in `pt-ekklesia-docs` (same session, linked to the originating PR) — documentation debt compounds quickly.
 
 **Update docs when you:**
 
@@ -69,6 +69,8 @@ Certain files begin with a two-line file header (`# <Display Name>` / `# <URL>`)
 
 A blank line after the header is followed optionally by additional `#` comment lines describing the file's specific purpose (e.g. what the locals transform, what the outputs expose).
 
+In `main.tofu` and `data.tofu`, a single blank line separates each heading comment block from the first block it describes (see the templates in the reference file).
+
 In `main.tofu` and `data.tofu`, each group of `resource`, `data`, or `module` blocks that share the same type (or same module source) is preceded by a single comment block. The comment appears **once per type or shared module source**, before the first block of that group — not before every individual block. All module blocks sharing the same source must be kept **contiguous** (grouped together) so they fall under one heading. See [`reference/opentofu-and-readme-templates.md`](../../reference/opentofu-and-readme-templates.md) for heading examples (single resource type, repeated `kubernetes_manifest` resources, and multiple modules sharing one source).
 
 Use the provider's documentation URL (e.g. `https://search.opentofu.org/provider/...`) for resource and data blocks. Use the GitHub repo URL (e.g. `https://github.com/osinfra-io/pt-arche-...`) for module blocks. Always validate that comment URLs resolve correctly before adding or approving them.
@@ -86,16 +88,16 @@ Use the provider's documentation URL (e.g. `https://search.opentofu.org/provider
 **Formatting rules:**
 
 - Lists and maps: empty newline before and after, unless they are the first or last argument in the block
-- Functions: single-line for simple calls; multi-line for complex nested functions
+- Functions (in `locals.tofu` or the permitted inline conversions): single-line for simple calls; multi-line for complex nested functions
 - Indentation: 2 spaces (enforced by `tofu fmt`)
 
 See [`reference/opentofu-and-readme-templates.md`](../../reference/opentofu-and-readme-templates.md) for a worked block-formatting example.
 
 ## Pre-Commit Workflow (Mandatory)
 
-**`pre-commit run -a` must be run before committing in this workspace.** Do not wait to be asked.
+**`pre-commit run -a` must be run from the repository root before committing in any repo that has a `.pre-commit-config.yaml`.** Do not wait to be asked. Repos without that file (e.g. `pt-ai-context`) skip this step.
 
-Run `pre-commit autoupdate --freeze` once at the start of a session before the first `pre-commit run -a`.
+Run `pre-commit autoupdate --freeze` once per session in each such repo before its first `pre-commit run -a`. If it changes `.pre-commit-config.yaml`, include that file in the commit for the task at hand — don't leave it as an uncommitted change or split it into a separate commit.
 
 ```bash
 pre-commit autoupdate --freeze   # run once per session to update hooks and pin to commit SHAs
@@ -109,6 +111,8 @@ Pre-commit hooks enforce: `tofu fmt`, `tofu validate`, `tofu test`, YAML validat
 ### Logic in Locals
 
 All conditional logic, string transformations, and computed values must live in `locals.tofu` — never inline in resource or module arguments. Blocks reference `local.*` for computed values, but may also reference `module.*`, `var.*`, and `each.*` directly.
+
+The only inline exception is a single-function type conversion with no conditional or string logic (e.g. `for_each = toset(var.names)`, `jsonencode(var.config)`). Anything nested, conditional, or string-building (`format`, `join`, `lookup`, `try`, `merge`, ternaries, `for` expressions) goes in `locals.tofu`.
 
 ```hcl
 # ✅ Correct
@@ -224,6 +228,8 @@ Three environments are used across all deployments:
 
 Workspace naming patterns vary by repo type:
 
+Repos not listed (e.g. `pt-arche-*`, `pt-techne-*`, `pt-ekklesia-*`) do not deploy workspaces.
+
 - **pt-logos**: `pt-logos-main-{env}` (e.g. `pt-logos-main-production`)
 - **pt-corpus**: main workspace `main-{env}`; regional workspace `{region}-{env}` (e.g. `us-east1-production`)
 - **pt-pneuma**: main workspace `main-{env}`; zonal workspace `{zone}-{env}` (e.g. `us-east1-b-production`); subdirectory workspace `{zone}-{subdirectory}-{env}` (e.g. `us-east1-b-cert-manager-production`)
@@ -248,7 +254,7 @@ The `pt-arche-core-helpers` module is invoked from every root module's `helpers.
 
 Tags follow [Semantic Versioning](https://semver.org/): `MAJOR.MINOR.PATCH` — increment MAJOR for breaking changes, MINOR for backwards-compatible additions, PATCH for backwards-compatible fixes.
 
-Push a tag — the GitHub Actions release workflow generates notes and publishes automatically:
+Applies to versioned repos (e.g. `pt-arche-*` modules); deployment repos such as `pt-corpus`, `pt-pneuma`, and `pt-logos` are not tagged. Push a tag — the GitHub Actions release workflow generates notes and publishes automatically:
 
 ```none
 git tag vX.Y.Z
