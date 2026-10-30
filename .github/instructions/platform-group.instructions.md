@@ -109,6 +109,10 @@ Pre-commit hooks enforce checks such as `tofu fmt`, `tofu validate`, focused `to
 
 ## Key Conventions
 
+### Product Branding
+
+Use lowercase **authentik** and **agentgateway** in prose, headings, comments, and user-facing messages, including at the beginning of sentences. Preserve exact casing in API names, code identifiers, upstream resource kinds, and existing configured names when changing them would affect behavior.
+
 ### Logic in Locals
 
 All conditional logic, string transformations, and computed values must live in `locals.tofu` — never inline in resource or module arguments. Blocks reference `local.*` for computed values, but may also reference `module.*`, `var.*`, and `each.*` directly.
