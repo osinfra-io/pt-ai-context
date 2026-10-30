@@ -25,6 +25,7 @@ The platform is organized into teams (a domain of concern that may map to indivi
 
 ## Code Quality Principles
 
+- **Build a reference architecture** — osinfra.io repositories provide a solid baseline, not production systems whose deployed behavior must be preserved. Prefer the simplest clear implementation; breaking changes are acceptable when they improve the baseline. Use focused checks to validate the intended baseline, not regression suites to guarantee compatibility with live environments.
 - **Keep it simple** — Favor straightforward solutions over clever ones.
 - **Less is more** — Write only the code necessary to solve the problem at hand. Every line is a liability that must be maintained and understood.
 - **Avoid over-engineering** — Don't add abstraction or flexibility for hypothetical future needs. Solve today's problems today.
@@ -104,7 +105,7 @@ pre-commit autoupdate --freeze   # run once per session to update hooks and pin 
 pre-commit run -a                # run before committing; enforces fmt, validate, docs, security
 ```
 
-Pre-commit hooks enforce: `tofu fmt`, `tofu validate`, `tofu test`, YAML validation, documentation generation, and trailing whitespace fixes.
+Pre-commit hooks enforce checks such as `tofu fmt`, `tofu validate`, focused `tofu test` checks, YAML validation, documentation generation, and trailing whitespace fixes. Keep tests focused on the intended reference baseline; don't add regression coverage solely to preserve behavior in live environments.
 
 ## Key Conventions
 
@@ -264,6 +265,8 @@ The `pt-arche-core-helpers` module is invoked from every root module's `helpers.
 Tags follow [Semantic Versioning](https://semver.org/): `MAJOR.MINOR.PATCH` — increment MAJOR for breaking changes, MINOR for backwards-compatible additions, PATCH for backwards-compatible fixes.
 
 Applies to versioned repos (e.g. `pt-arche-*` modules); deployment repos such as `pt-corpus`, `pt-pneuma`, and `pt-logos` are not tagged. Push a tag — the GitHub Actions release workflow generates notes and publishes automatically:
+
+Breaking changes are acceptable when they improve the reference baseline. Update pinned consumers to the intended version as needed; do not preserve deployed behavior solely for backward compatibility.
 
 ```none
 git tag vX.Y.Z
