@@ -35,14 +35,16 @@ The platform is organized into teams (a domain of concern that may map to indivi
 
 ## Documentation Updates
 
-The `pt-ekklesia-docs` repository is the platform's Docusaurus documentation site. When making changes that affect platform behavior, open a PR in `pt-ekklesia-docs` (same session, linked to the originating PR) — documentation debt compounds quickly.
+The `pt-ekklesia-docs` repository is the platform's Docusaurus documentation site. Open a PR there (same session, linked to the originating PR) only when a change affects what platform consumers or operators need to know, or makes existing documentation inaccurate.
 
 **Update docs when you:**
 
-- Add or remove a resource, module, or service
+- Add or remove a resource, module, or service that changes documented capabilities, prerequisites, or responsibilities
 - Change a workflow, deployment process, or operational procedure
 - Introduce or retire a convention (naming, file structure, ordering)
 - Change platform architecture (new team, new layer, new dependency)
+
+**Do not update docs for implementation-only changes** that preserve the intended behavior, architecture, workflows, and operational procedures. This includes plan-drift normalization, provider/API serialization fixes, refactoring, and tests. Explain the cause and fix in the implementation PR, not in the documentation site. Applying an existing convention is not introducing a new convention; do not invent one to justify a docs PR. If a bug fix changes documented behavior or reveals inaccurate guidance, update only the affected guidance.
 
 **How to update:**
 
