@@ -35,22 +35,13 @@ The platform is organized into teams (a domain of concern that may map to indivi
 
 ## Documentation Updates
 
-The `pt-ekklesia-docs` repository is the platform's Docusaurus documentation site. Open a PR there (same session, linked to the originating PR) only when a change affects what platform consumers or operators need to know, or makes existing documentation inaccurate.
+Documentation is not a deliverable for every code change. Do not create or edit READMEs, docs pages, changelogs, or other explanatory files unless the user asks for documentation or the change makes existing consumer/operator guidance materially inaccurate or leaves a necessary operational detail undocumented. Code changes alone do not imply a documentation update.
 
-**Update docs when you:**
+When a documentation update is genuinely needed, change only the specific passage required to explain the user-visible or operational difference. Do not add generic descriptions, implementation summaries, duplicated examples, inventories, or sections that do not help a consumer or operator make a decision or complete a task. If unsure whether a documentation change is needed, leave docs untouched and state the concrete documentation gap in the implementation handoff instead.
 
-- Add or remove a resource, module, or service that changes documented capabilities, prerequisites, or responsibilities
-- Change a workflow, deployment process, or operational procedure
-- Introduce or retire a convention (naming, file structure, ordering)
-- Change platform architecture (new team, new layer, new dependency)
+For a necessary platform-docs change, update the relevant page in `pt-ekklesia-docs` in the same session and link it to the originating PR. Create a page only when no relevant page exists. Never leave a page describing behavior that no longer exists.
 
-**Do not update docs for implementation-only changes** that preserve the intended behavior, architecture, workflows, and operational procedures. This includes plan-drift normalization, provider/API serialization fixes, refactoring, and tests. Explain the cause and fix in the implementation PR, not in the documentation site. Applying an existing convention is not introducing a new convention; do not invent one to justify a docs PR. If a bug fix changes documented behavior or reveals inaccurate guidance, update only the affected guidance.
-
-**How to update:**
-
-- Find the relevant page in `pt-ekklesia-docs` and update it in place
-- If no page exists yet, create one in the most relevant section
-- Never leave a doc page describing behavior that no longer exists
+Implementation-only changes—including refactoring, tests, serialization fixes, and plan-drift normalization—do not need docs. Applying an existing convention is not introducing one. Do not add docs merely to explain the code change in a PR or to make the change look more complete.
 
 ## OpenTofu File Structure
 
