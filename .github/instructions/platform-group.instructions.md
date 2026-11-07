@@ -106,6 +106,20 @@ Pre-commit hooks enforce checks such as `tofu fmt`, `tofu validate`, focused `to
 
 Use lowercase **authentik** and **agentgateway** in prose, headings, comments, and user-facing messages, including at the beginning of sentences. Preserve exact casing in API names, code identifiers, upstream resource kinds, and existing configured names when changing them would affect behavior.
 
+### Datadog Unified Service Tagging
+
+Kubernetes workloads collected by Datadog must explicitly carry all three [unified service tagging](https://docs.datadoghq.com/getting_started/tagging/unified_service_tagging/) labels on their **pod templates**, using the chart's supported pod-label fields or the controller's deployment template:
+
+- `tags.datadoghq.com/env`: `module.core_helpers.environment` (`sandbox`, `non-production`, `production`), never the short environment name. A reusable runtime receiving environment from its caller uses that input; the caller supplies the core-helper output.
+- `tags.datadoghq.com/service`: the canonical lowercase, dash-separated service identity, matching the service catalog where one exists. Do not rename Kubernetes resources merely to change telemetry attribution.
+- `tags.datadoghq.com/version`: the configured component release version, not a hardcoded duplicate.
+
+Deployment metadata alone is insufficient. The Datadog Agent's own pod labels do not supply an environment default for other workloads. In our single-environment clusters, configure its global tags with the same core-helper environment so unlabelled telemetry also inherits the correct env.
+
+Keep a workload's unified service tagging labels together. For Helm values, define them in `locals.tofu` rather than splitting the identity between static YAML and computed values. Shared chart labels may provide env/version while component pod labels supply distinct services, provided the rendered pod templates carry all three.
+
+Set a log `source` through container-specific `ad.datadoghq.com/<container>.logs` annotations when the default image-derived source is unsuitable. `tags.datadoghq.com/source` is not a unified service tagging label. Preserve native integration sources such as `vault` for OpenBao while retaining canonical service names. Independently attributed sidecars must have their own container-specific log configuration and `tags.datadoghq.com/<container>.service` label so they do not inherit the application's service.
+
 ### Logic in Locals
 
 All conditional logic, string transformations, and computed values must live in `locals.tofu` — never inline in resource or module arguments. Blocks reference `local.*` for computed values, but may also reference `module.*`, `var.*`, and `each.*` directly.
