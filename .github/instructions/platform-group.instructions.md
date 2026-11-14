@@ -37,6 +37,8 @@ The platform is organized into teams (a domain of concern that may map to indivi
 
 Documentation is not a deliverable for every code change. Do not create or edit READMEs, docs pages, changelogs, or other explanatory files unless the user asks for documentation or the change makes existing consumer/operator guidance materially inaccurate or leaves a necessary operational detail undocumented. Code changes alone do not imply a documentation update.
 
+Environment- or team-specific configuration changes, such as enabling or disabling a feature for selected workspaces, do not warrant documentation updates—even if they change the current deployed state described by a page. Update docs for these changes only when the user explicitly asks.
+
 When a documentation update is genuinely needed, change only the specific passage required to explain the user-visible or operational difference. Do not add generic descriptions, implementation summaries, duplicated examples, inventories, or sections that do not help a consumer or operator make a decision or complete a task. If unsure whether a documentation change is needed, leave docs untouched and state the concrete documentation gap in the implementation handoff instead.
 
 For a necessary platform-docs change, update the relevant page in `pt-ekklesia-docs` in the same session and link it to the originating PR. Create a page only when no relevant page exists. Never leave a page describing behavior that no longer exists.
